@@ -9,22 +9,21 @@
   <style>
     :root{
       --bg:#0b0b0c; --card:#141417; --card2:#1b1b20; --txt:#f2f2f2; --muted:#a7a7b3;
-      --line:#2a2a33; --accent:#66a3ff; --ok:#52d273; --warn:#ffcc66; --bad:#ff6b6b;
-      --chip:#23232b;
+      --line:#2a2a33; --accent:#66a3ff; --ok:#52d273; --bad:#ff6b6b; --chip:#23232b;
     }
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Arial}
     button,input,select,textarea{font:inherit}
-    a{color:inherit}
     .app{max-width:980px;margin:0 auto;min-height:100svh;display:flex;flex-direction:column}
     header{position:sticky;top:0;z-index:20;background:rgba(11,11,12,.92);backdrop-filter: blur(10px);border-bottom:1px solid var(--line)}
     .topbar{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px}
     .brand{font-weight:800;letter-spacing:.4px}
     .tabs{display:flex;gap:8px;overflow:auto;padding:10px 10px 12px}
     .tab{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--txt);
-      padding:8px 10px;border-radius:12px;opacity:.9}
+      padding:8px 10px;border-radius:12px;opacity:.9;cursor:pointer}
     .tab.active{border-color:rgba(102,163,255,.7);box-shadow:0 0 0 3px rgba(102,163,255,.12) inset;opacity:1}
     main{flex:1;padding:12px}
+
     .grid{display:grid;gap:10px}
     @media (min-width:760px){ .grid.cols2{grid-template-columns:1fr 1fr} .grid.cols3{grid-template-columns:1fr 1fr 1fr} }
     .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
@@ -33,8 +32,7 @@
     .row.wrap{flex-wrap:wrap}
     .sp{justify-content:space-between}
     .muted{color:var(--muted)}
-    .pill{display:inline-flex;gap:6px;align-items:center;background:var(--chip);border:1px solid var(--line);
-      padding:6px 10px;border-radius:999px;color:var(--muted)}
+    .kicker{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
     .btn{border:1px solid var(--line);background:var(--card2);color:var(--txt);
       padding:8px 10px;border-radius:12px;cursor:pointer}
     .btn:hover{filter:brightness(1.05)}
@@ -43,32 +41,22 @@
     .btn.bad{border-color:rgba(255,107,107,.6)}
     .btn.ghost{background:transparent}
     .btn.small{padding:6px 8px;border-radius:10px}
-    .field{display:flex;flex-direction:column;gap:6px}
+
     input,select,textarea{
       background:#0f0f12;border:1px solid var(--line);color:var(--txt);
       padding:10px;border-radius:12px;outline:none
     }
     textarea{min-height:86px;resize:vertical}
+    .field{display:flex;flex-direction:column;gap:6px}
     .hr{height:1px;background:var(--line);margin:10px 0}
+
     .list{display:flex;flex-direction:column;gap:8px}
     .item{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:10px}
-    .title{font-weight:700}
+    .title{font-weight:800}
     .meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);margin-top:4px}
     .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--muted)}
     .xpbar{height:10px;background:#0f0f12;border:1px solid var(--line);border-radius:999px;overflow:hidden}
     .xpbar > div{height:100%;background:linear-gradient(90deg, rgba(102,163,255,.95), rgba(82,210,115,.95))}
-    .kicker{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
-    details{border:1px solid var(--line);background:var(--card);border-radius:16px;padding:10px}
-    summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px}
-    summary::-webkit-details-marker{display:none}
-    .sumLeft{display:flex;flex-direction:column;gap:2px}
-    .sumRight{display:flex;gap:8px;align-items:center}
-    .twoCol{display:grid;gap:10px}
-    @media (min-width:760px){ .twoCol{grid-template-columns: 1fr 1fr} }
-    .hint{font-size:12px;color:var(--muted)}
-    .danger{color:var(--bad)}
-    .oktxt{color:var(--ok)}
-    .accent{color:var(--accent)}
 
     /* Modal */
     .modalBackdrop{
@@ -82,9 +70,9 @@
       box-shadow:0 20px 80px rgba(0,0,0,.55);
     }
     .modal header{position:static;background:transparent;border:0;padding:0;margin-bottom:10px}
-    .modalTitle{font-weight:800}
+    .modalTitle{font-weight:900}
 
-    /* ===== Graph UI (boxes + lines) ===== */
+    /* Graph */
     .graphWrap{
       position:relative;
       width:100%;
@@ -100,13 +88,11 @@
       height:520px;
     }
     .graphLines{
-      position:absolute;
-      inset:0;
-      pointer-events:none;
+      position:absolute; inset:0; pointer-events:none;
     }
     .node{
       position:absolute;
-      width:180px;
+      width:190px;
       border:1px solid var(--line);
       background:var(--card2);
       border-radius:14px;
@@ -115,7 +101,7 @@
       user-select:none;
     }
     .node:hover{ filter:brightness(1.06); }
-    .nodeTitle{ font-weight:800; }
+    .nodeTitle{ font-weight:900; }
     .nodeMeta{
       margin-top:4px;
       color:var(--muted);
@@ -141,6 +127,11 @@
     }
     .nodeBtn.ok{ border-color:rgba(82,210,115,.55); }
     .nodeBtn.primary{ border-color:rgba(102,163,255,.6); }
+
+    .hint{font-size:12px;color:var(--muted)}
+    .danger{color:var(--bad)}
+    .oktxt{color:var(--ok)}
+    .accent{color:var(--accent)}
   </style>
 </head>
 
@@ -210,7 +201,7 @@ function xpProgress(totalXp){
 }
 
 /* =========================
-   MAINSKILLS + SUBSKILLS (FROM YOUR MAP IMAGE + USER ADDED)
+   MAINSKILLS
 ========================= */
 const MAINSKILLS = [
   { code:"SOC", name:"Social" },
@@ -230,133 +221,73 @@ const MAINSKILLS = [
   { code:"DAT", name:"Dating" },
 ];
 
-const MAP_SUBSKILLS_BY_MAIN = {
-  SOC: [
-    "Friends","Communication","Relationship","Family","Social Media",
-    "Contacts/Networking","Conversations","Hooking/Flirting","Calls","Winks",
-    "Group Conversations","Conversations with Stranger"
-  ],
-  MEN: [
-    "Knowledge","Creative/Endeavours","Spiritual","Nutrition","Reading","Meditation",
-    "Sex","Cold Showers","Yoga","Research","Motivation","No Gaming / No Social Media",
-    "Power","Kindness","Pray/Manifest","Gratitude"
-  ],
-  FIN: [
-    "Economy","Spreadsheet","Budget","Saving","HB/Account","Savings Account",
-    "Investing","Crypto","Stocks","CNS","FM Loans","Gifts","Bills"
-  ],
-  PHY: [
-    "Workout","Cardio","Sports Activity","Workout Equipment",
-    "Gym","Volume","Calories","Vitamins/Supplements",
-    "Arms","Mountaineering","Sauna",
-    "Chest","Steps","Running",
-    "Legs","Homegym","Dieting"
-  ],
-  APP: [
-    "Hygiene","Grooming","Flowers","Transportation",
-    "Personal Development","Brushing","Add Beauty Daily","Bike",
-    "Haircuts","Fighter","BKL"
-  ],
-  DIE: [
-    "Health","Kill Fuel","Invest in Eli","Food Logging / Cal Counting",
-    "OM","LCL Meals","Research Diet","Weight",
-    "Control Impulses","Supplements"
-  ],
-  HOM: [
-    "Groceries","Cleaning","Decorum","Washing Clothes","Cooking","Computer","Flowers"
-  ],
-  SCH: [
-    "Theory","Practice","AI in School"
-  ],
+const DEFAULT_SUBSKILLS_BY_MAIN = {
+  SOC: ["Friends","Communication","Relationship","Family","Social Media","Contacts/Networking","Conversations","Hooking/Flirting","Calls","Winks","Group Conversations","Conversations with Stranger"],
+  MEN: ["Knowledge","Creative/Endeavours","Spiritual","Nutrition","Reading","Meditation","Sex","Cold Showers","Yoga","Research","Motivation","No Gaming / No Social Media","Power","Kindness","Pray/Manifest","Gratitude"],
+  FIN: ["Economy","Spreadsheet","Budget","Saving","HB/Account","Savings Account","Investing","Crypto","Stocks","CNS","FM Loans","Gifts","Bills"],
+  PHY: ["Workout","Cardio","Sports Activity","Workout Equipment","Gym","Volume","Calories","Vitamins/Supplements","Arms","Mountaineering","Sauna","Chest","Steps","Running","Legs","Homegym","Dieting"],
+  APP: ["Hygiene","Grooming","Flowers","Transportation","Personal Development","Brushing","Add Beauty Daily","Bike","Haircuts","Fighter","BKL"],
+  DIE: ["Health","Kill Fuel","Invest in Eli","Food Logging / Cal Counting","OM","LCL Meals","Research Diet","Weight","Control Impulses","Supplements"],
+  HOM: ["Groceries","Cleaning","Decorum","Washing Clothes","Cooking","Computer","Flowers"],
+  SCH: ["Theory","Practice","AI in School"],
   LEA: [], CAR: [], SID: [], BUS: [], HOB: [], WOR: [], DAT: [],
 };
 
-function subId(mainCode, subName){ return `${mainCode}__${subName}`; }
-
-/* =========================
-   CONNECTED GRAPH (LINES + BOXES)
-   - SOC has a hand layout and edges matching your Tab 2B1 vibe.
-   - Other mainskills: boxes still render, lines appear only if you add edges/layout later.
-========================= */
-const GRAPH_EDGES_BY_MAIN = {
-  SOC: [
-    ["Social", "Friends"],
-    ["Social", "Communication"],
-    ["Social", "Family"],
-
-    ["Friends", "Contacts/Networking"],
-
-    ["Communication", "Conversations"],
-    ["Communication", "Calls"],
-
-    ["Conversations", "Group Conversations"],
-    ["Conversations", "Conversations with Stranger"],
-  ],
-};
-
-const GRAPH_POS_BY_MAIN = {
-  SOC: {
-    "__ROOT__": { x: 360, y: 40, w: 260, h: 90, label: "SOCIAL (Main)" },
-
-    "Friends": { x: 210, y: 180 },
-    "Communication": { x: 420, y: 180 },
-    "Family": { x: 630, y: 180 },
-
-    "Contacts/Networking": { x: 160, y: 310 },
-
-    "Conversations": { x: 360, y: 310 },
-    "Calls": { x: 520, y: 310 },
-
-    "Group Conversations": { x: 300, y: 420 },
-    "Conversations with Stranger": { x: 500, y: 420 },
-  }
-};
-
-/* =========================
-   STORAGE
-========================= */
-const STORE_KEY = "gogetta_gg_v4";
-
+function mainskillName(code){
+  return MAINSKILLS.find(m=>m.code===code)?.name || code;
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, (c)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  })[c]);
+}
+function el(html){
+  const d = document.createElement("div");
+  d.innerHTML = html.trim();
+  return d.firstElementChild;
+}
 function cryptoId(){
   if (crypto?.randomUUID) return crypto.randomUUID();
   return Math.random().toString(16).slice(2) + Date.now().toString(16);
 }
 
+/* =========================
+   TREE MODEL
+   - Each subskill has: { id, mainCode, name, parentId|null, totalXp }
+   - parentId null = directly connected to main skill
+========================= */
+const STORE_KEY = "gogetta_tree_v1";
+
+function subId(mainCode, name){ return `${mainCode}__${name}`; }
+
 function defaultState(){
   const skills = {};
-  for (const m of MAINSKILLS) skills[m.code] = { totalXp: 0 };
-
   const subskills = {};
+
   for (const m of MAINSKILLS){
-    const list = MAP_SUBSKILLS_BY_MAIN[m.code] || [];
-    for (const s of list){
-      subskills[subId(m.code,s)] = { mainCode: m.code, name: s, totalXp: 0 };
+    skills[m.code] = { totalXp: 0 };
+    const base = DEFAULT_SUBSKILLS_BY_MAIN[m.code] || [];
+    for (const s of base){
+      const id = subId(m.code, s);
+      subskills[id] = { id, mainCode: m.code, name: s, parentId: null, totalXp: 0 };
     }
   }
 
   return {
-    version: 4,
+    version: 1,
     profile: { username: "Player", note: "" },
     skills,
     subskills,
-    userSubskillsByMain: {},
     missions: [],
     habits: [],
-    priorities: [
-      {id: cryptoId(), title:"Weight", tag:"DIE"},
-      {id: cryptoId(), title:"Run Marathon", tag:"PHY"},
-      {id: cryptoId(), title:"Climb Kebnekaise", tag:"PHY"},
-      {id: cryptoId(), title:"Dating", tag:"SOC"},
-      {id: cryptoId(), title:"PUA", tag:"HOB"},
-    ],
-    wishlist: [
-      {id: cryptoId(), title:"Lions Mane", cost:"1000 kr", tag:"DIE"},
-      {id: cryptoId(), title:"Running Shoes", cost:"2000 kr", tag:"PHY"},
-      {id: cryptoId(), title:"Barbell", cost:"599 kr", tag:"PHY"},
-      {id: cryptoId(), title:"Tinder Membership", cost:"200 kr", tag:"SOC"},
-      {id: cryptoId(), title:"Dancing Courses", cost:"300 kr", tag:"HOB"},
-    ],
-    ui: { selectedMain:"SOC", selectedSub:"", activeTab:"PROFILE" },
+    priorities: [],
+    wishlist: [],
+    ui: {
+      activeTab: "MAINSKILLS",
+      view: "LIST",              // LIST | DETAIL
+      selectedMain: "SOC",
+      selectedNode: null,        // subskill id or null (main root)
+    },
   };
 }
 
@@ -366,33 +297,30 @@ function loadState(){
     if (!raw) return defaultState();
     const st = JSON.parse(raw);
 
-    st.skills ||= {};
-    for (const m of MAINSKILLS) st.skills[m.code] ||= { totalXp: 0 };
-
-    st.subskills ||= {};
-    st.userSubskillsByMain ||= {};
-
-    for (const m of MAINSKILLS){
-      const list = MAP_SUBSKILLS_BY_MAIN[m.code] || [];
-      for (const s of list){
-        const id = subId(m.code,s);
-        st.subskills[id] ||= { mainCode:m.code, name:s, totalXp: 0 };
-      }
-    }
-    for (const [main, arr] of Object.entries(st.userSubskillsByMain)){
-      if (!Array.isArray(arr)) continue;
-      for (const s of arr){
-        const id = subId(main, s);
-        st.subskills[id] ||= { mainCode: main, name: s, totalXp: 0 };
-      }
-    }
-
     st.profile ||= { username:"Player", note:"" };
+    st.skills ||= {};
+    st.subskills ||= {};
     st.missions ||= [];
     st.habits ||= [];
     st.priorities ||= [];
     st.wishlist ||= [];
-    st.ui ||= { selectedMain:"SOC", selectedSub:"", activeTab:"PROFILE" };
+    st.ui ||= { activeTab:"MAINSKILLS", view:"LIST", selectedMain:"SOC", selectedNode:null };
+
+    for (const m of MAINSKILLS){
+      st.skills[m.code] ||= { totalXp: 0 };
+      const base = DEFAULT_SUBSKILLS_BY_MAIN[m.code] || [];
+      for (const s of base){
+        const id = subId(m.code, s);
+        st.subskills[id] ||= { id, mainCode:m.code, name:s, parentId:null, totalXp: 0 };
+      }
+    }
+
+    // normalize objects
+    for (const [id, node] of Object.entries(st.subskills)){
+      node.id ||= id;
+      node.totalXp = Number(node.totalXp)||0;
+      node.parentId = node.parentId ?? null;
+    }
 
     return st;
   }catch{
@@ -400,31 +328,81 @@ function loadState(){
   }
 }
 
+let state = loadState();
 function saveState(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 
-let state = loadState();
+/* =========================
+   TREE HELPERS
+========================= */
+function nodesForMain(mainCode){
+  return Object.values(state.subskills).filter(n=>n.mainCode===mainCode);
+}
+function childrenOf(mainCode, parentId){
+  return nodesForMain(mainCode).filter(n=>n.parentId===parentId);
+}
+function nodeById(id){ return id ? state.subskills[id] : null; }
+
+function ensureSubskill(mainCode, name, parentId){
+  const trimmed = (name||"").trim();
+  if (!trimmed) return null;
+  const id = subId(mainCode, trimmed);
+  if (!state.subskills[id]){
+    state.subskills[id] = { id, mainCode, name: trimmed, parentId: parentId ?? null, totalXp: 0 };
+  } else {
+    // if it exists and you are "adding under" something, keep existing parent unless it had none
+    if (state.subskills[id].parentId == null && parentId != null){
+      state.subskills[id].parentId = parentId;
+    }
+  }
+  saveState();
+  return id;
+}
 
 /* =========================
-   TABS
+   XP FLOW (TREE)
+   - Completing a mission adds XP to the node AND all ancestors + the mainskill.
+========================= */
+function addXpFlow(mainCode, nodeId, delta){
+  delta = Number(delta)||0;
+  if (!delta) return;
+
+  // main always changes
+  state.skills[mainCode] ||= { totalXp: 0 };
+  state.skills[mainCode].totalXp = Math.max(0, (state.skills[mainCode].totalXp||0) + delta);
+
+  // flow up the tree
+  let curId = nodeId;
+  while (curId){
+    const n = state.subskills[curId];
+    if (!n) break;
+    n.totalXp = Math.max(0, (n.totalXp||0) + delta);
+    curId = n.parentId;
+  }
+
+  saveState();
+  render();
+}
+
+/* =========================
+   TABS (Top-level)
 ========================= */
 const TABS = [
   { id:"PROFILE", label:"PROFILE" },
   { id:"MAINSKILLS", label:"MAINSKILLS" },
-  { id:"SKILLSMAP", label:"SKILLSMAP" },
   { id:"MISSIONS", label:"MISSIONS" },
   { id:"HABITS", label:"HABITS" },
   { id:"PRIORITIES", label:"PRIORITIES" },
   { id:"WISHLIST", label:"WISHLIST" },
 ];
 
-const tabsEl = document.getElementById("tabs");
-const mainEl = document.getElementById("main");
-
 function setTab(id){
   state.ui.activeTab = id;
   saveState();
   render();
 }
+
+const tabsEl = document.getElementById("tabs");
+const mainEl = document.getElementById("main");
 
 function renderTabs(){
   tabsEl.innerHTML = "";
@@ -435,21 +413,6 @@ function renderTabs(){
     b.onclick = ()=> setTab(t.id);
     tabsEl.appendChild(b);
   }
-}
-
-/* =========================
-   XP APPLY
-========================= */
-function addXp(mainCode, subSkillId, delta){
-  delta = Number(delta)||0;
-  if (!delta) return;
-  state.skills[mainCode] ||= { totalXp: 0 };
-  state.skills[mainCode].totalXp = Math.max(0, (state.skills[mainCode].totalXp||0) + delta);
-  if (subSkillId && state.subskills[subSkillId]){
-    state.subskills[subSkillId].totalXp = Math.max(0, (state.subskills[subSkillId].totalXp||0) + delta);
-  }
-  saveState();
-  render();
 }
 
 /* =========================
@@ -470,59 +433,7 @@ function openModal(title, bodyNode){
 function closeModal(){ modalBackdrop.classList.remove("show"); }
 
 /* =========================
-   UI HELPERS
-========================= */
-function el(html){
-  const d = document.createElement("div");
-  d.innerHTML = html.trim();
-  return d.firstElementChild;
-}
-function formatDateShort(iso){
-  if (!iso) return "";
-  const dt = new Date(iso);
-  if (Number.isNaN(dt.getTime())) return "";
-  return dt.toLocaleDateString(undefined, {year:"2-digit", month:"2-digit", day:"2-digit"});
-}
-function daysUntil(iso){
-  if (!iso) return null;
-  const dt = new Date(iso);
-  if (Number.isNaN(dt.getTime())) return null;
-  const now = new Date();
-  const ms = dt.setHours(0,0,0,0) - new Date(now.setHours(0,0,0,0)).getTime();
-  return Math.round(ms / 86400000);
-}
-function mainskillName(code){
-  return MAINSKILLS.find(m=>m.code===code)?.name || code;
-}
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, (c)=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-  })[c]);
-}
-
-function allSubskillNamesForMain(mainCode){
-  const base = MAP_SUBSKILLS_BY_MAIN[mainCode] || [];
-  const user = state.userSubskillsByMain[mainCode] || [];
-  const set = new Set([...base, ...user]);
-  return [...set];
-}
-
-function ensureSubskill(mainCode, name){
-  const trimmed = (name||"").trim();
-  if (!trimmed) return null;
-  const id = subId(mainCode, trimmed);
-  state.subskills[id] ||= { mainCode, name: trimmed, totalXp: 0 };
-  state.userSubskillsByMain[mainCode] ||= [];
-  const arr = state.userSubskillsByMain[mainCode];
-  if (!arr.includes(trimmed) && !(MAP_SUBSKILLS_BY_MAIN[mainCode]||[]).includes(trimmed)){
-    arr.push(trimmed);
-  }
-  saveState();
-  return id;
-}
-
-/* =========================
-   CREATE FORMS
+   CREATE MISSION/HABIT FORM (target = selected main + selected node)
 ========================= */
 function createFormHtml(){
   return `
@@ -531,33 +442,39 @@ function createFormHtml(){
         <button class="btn small primary" data-kind="mission" type="button">Mission</button>
         <button class="btn small primary" data-kind="habit" type="button">Habit</button>
       </div>
+
       <div class="field" style="margin-top:10px">
         <label class="muted">Target</label>
-        <div class="pill" data-targetpill>—</div>
+        <div class="chip" data-targetpill>—</div>
       </div>
+
       <div class="field" style="margin-top:10px">
         <label class="muted">Title</label>
         <input data-title placeholder="e.g. Talk with mom" />
       </div>
+
       <div class="field" style="margin-top:10px">
         <label class="muted">Description (optional)</label>
         <textarea data-desc placeholder="extra details..."></textarea>
       </div>
+
       <div class="field" style="margin-top:10px" data-duewrap>
         <label class="muted">Habit due date (optional)</label>
         <input data-due type="date" />
       </div>
+
       <div class="row wrap" style="margin-top:10px">
         <button class="btn ok" data-create type="button">Add</button>
       </div>
+
       <div class="hint" style="margin-top:10px">
-        Finishing a mission adds <span class="oktxt">+1 XP</span> to the selected <span class="accent">subskill</span> (if selected) and its <span class="accent">mainskill</span>.
+        Finishing a mission adds <span class="oktxt">+1 XP</span> to the selected node and flows up to the <span class="accent">main skill</span>.
       </div>
     </div>
   `;
 }
 
-function bindCreateForm(container){
+function bindCreateForm(container, getTarget){
   const kindBtns = container.querySelectorAll("[data-kind]");
   const targetPill = container.querySelector("[data-targetpill]");
   const titleEl = container.querySelector("[data-title]");
@@ -565,16 +482,15 @@ function bindCreateForm(container){
   const dueWrap = container.querySelector("[data-duewrap]");
   const dueEl = container.querySelector("[data-due]");
   const createBtn = container.querySelector("[data-create]");
-  if (!targetPill || !createBtn) return;
+  if (!createBtn || !targetPill) return;
 
   let kind = "mission";
 
   function refreshTarget(){
-    const main = state.ui.selectedMain || "SOC";
-    const sub = state.ui.selectedSub;
-    const mainLabel = `${main} — ${mainskillName(main)}`;
-    const subLabel = sub && state.subskills[sub] ? ` / ${state.subskills[sub].name}` : "";
-    targetPill.textContent = mainLabel + subLabel;
+    const { mainCode, nodeId } = getTarget();
+    const mainLabel = `${mainCode} — ${mainskillName(mainCode)}`;
+    const node = nodeById(nodeId);
+    targetPill.textContent = node ? `${mainLabel} / ${node.name}` : `${mainLabel} / (main)`;
   }
   refreshTarget();
 
@@ -590,8 +506,7 @@ function bindCreateForm(container){
   setKind(kind);
 
   createBtn.onclick = ()=>{
-    const mainCode = state.ui.selectedMain || "SOC";
-    const sub = state.ui.selectedSub || "";
+    const { mainCode, nodeId } = getTarget();
     const title = (titleEl?.value || "").trim();
     const desc = (descEl?.value || "").trim();
     if (!title) return alert("Title required.");
@@ -601,7 +516,7 @@ function bindCreateForm(container){
         id: cryptoId(),
         title, desc,
         mainCode,
-        subId: sub,
+        nodeId: nodeId || null,
         points: 0,
         createdAt: new Date().toISOString(),
       });
@@ -611,7 +526,7 @@ function bindCreateForm(container){
         id: cryptoId(),
         title, desc,
         mainCode,
-        subId: sub,
+        nodeId: nodeId || null,
         dueISO,
         createdAt: new Date().toISOString(),
       });
@@ -626,82 +541,73 @@ function bindCreateForm(container){
 }
 
 /* =========================
-   SUBSKILL PLUS MENU
+   GRAPH LAYOUT (TREE) + RENDER
+   - We compute depth by parent links and auto layout.
 ========================= */
-function openPlusMenuForSubskill(mainCode, subSkillId){
-  const subName = state.subskills[subSkillId]?.name || "";
-  const body = el(`
-    <div class="grid" style="gap:10px">
-      <div class="pill">Target: <b>${mainCode}</b> ${subName ? " / " + escapeHtml(subName) : ""}</div>
-      <div class="grid cols3">
-        <button class="btn ok" id="addSub">+ Subskill</button>
-        <button class="btn ok" id="addMission">+ Mission</button>
-        <button class="btn ok" id="addHabit">+ Habit</button>
-      </div>
-      <div class="hint">
-        Subskills start at Level 1 (XP 0). Missions/Habits will target this subskill automatically.
-      </div>
-    </div>
-  `);
+function computeTreeLayout(mainCode){
+  // Build adjacency
+  const all = nodesForMain(mainCode);
+  const rootId = "__ROOT__";
+  const kids = new Map(); // parentId -> childIds
+  for (const n of all){
+    const p = n.parentId ?? rootId; // top-level subskills are under root
+    if (!kids.has(p)) kids.set(p, []);
+    kids.get(p).push(n.id);
+  }
 
-  body.querySelector("#addSub").onclick = ()=>{
-    closeModal();
-    openAddSubskillModal(mainCode);
-  };
-  body.querySelector("#addMission").onclick = ()=>{
-    state.ui.selectedMain = mainCode;
-    state.ui.selectedSub = subSkillId;
-    state.ui.activeTab = "MISSIONS";
-    saveState();
-    closeModal();
-    render();
-  };
-  body.querySelector("#addHabit").onclick = ()=>{
-    state.ui.selectedMain = mainCode;
-    state.ui.selectedSub = subSkillId;
-    state.ui.activeTab = "HABITS";
-    saveState();
-    closeModal();
-    render();
-  };
+  // Stable ordering: alphabetical by name (so layout is predictable)
+  for (const [p, arr] of kids.entries()){
+    arr.sort((a,b)=> (nodeById(a)?.name||"").localeCompare(nodeById(b)?.name||""));
+  }
 
-  openModal("Add New", body);
+  // Leaf-based x assignment
+  const pos = new Map(); // id -> {x,y}
+  let nextX = 0;
+
+  const X_SPACING = 220;
+  const Y_SPACING = 140;
+  const X0 = 40;
+  const Y0 = 40;
+
+  function dfs(id, depth){
+    const children = kids.get(id) || [];
+    if (children.length === 0){
+      const x = nextX;
+      nextX += 1;
+      pos.set(id, { x, y: depth });
+      return x;
+    }
+    const childXs = children.map(ch => dfs(ch, depth+1));
+    const avg = childXs.reduce((a,b)=>a+b,0) / childXs.length;
+    pos.set(id, { x: avg, y: depth });
+    return avg;
+  }
+
+  dfs(rootId, 0);
+
+  // Convert grid coords to pixels
+  const px = {};
+  for (const [id, p] of pos.entries()){
+    px[id] = { left: X0 + p.x*X_SPACING, top: Y0 + p.y*Y_SPACING };
+  }
+
+  // Stage size
+  const maxX = Math.max(0, ...Object.values(px).map(v=>v.left));
+  const maxY = Math.max(0, ...Object.values(px).map(v=>v.top));
+  const stageW = Math.max(980, maxX + 260);
+  const stageH = Math.max(520, maxY + 220);
+
+  // Edges for SVG
+  const edges = [];
+  for (const [p, arr] of kids.entries()){
+    for (const ch of arr){
+      edges.push([p, ch]);
+    }
+  }
+
+  return { px, edges, stageW, stageH, rootId };
 }
 
-function openAddSubskillModal(mainCode){
-  const body = el(`
-    <div class="grid" style="gap:10px">
-      <div class="pill">Add subskill under <b>${mainCode} — ${mainskillName(mainCode)}</b></div>
-      <div class="field">
-        <label class="muted">Subskill name</label>
-        <input id="name" placeholder="e.g. Public Speaking" />
-      </div>
-      <div class="row wrap">
-        <button class="btn ok" id="create">Create</button>
-        <button class="btn" id="cancel">Cancel</button>
-      </div>
-      <div class="hint">After creating, it appears in MAINSKILLS + SKILLSMAP.</div>
-    </div>
-  `);
-
-  body.querySelector("#cancel").onclick = closeModal;
-  body.querySelector("#create").onclick = ()=>{
-    const name = body.querySelector("#name").value.trim();
-    if (!name) return alert("Name required.");
-    const id = ensureSubskill(mainCode, name);
-    state.ui.selectedMain = mainCode;
-    state.ui.selectedSub = id;
-    saveState();
-    closeModal();
-    render();
-  };
-
-  openModal("New Subskill", body);
-}
-
-/* =========================
-   GRAPH HELPERS + RENDERER (boxes + SVG lines)
-========================= */
 function getNodeRect(stageEl, nodeEl){
   const s = stageEl.getBoundingClientRect();
   const n = nodeEl.getBoundingClientRect();
@@ -713,35 +619,13 @@ function getNodeRect(stageEl, nodeEl){
   };
 }
 
-function autoLayoutNames(names){
-  const cols = 4;
-  const x0 = 40, y0 = 40, dx = 220, dy = 130;
-  const pos = {};
-  names.forEach((name, i)=>{
-    const col = i % cols;
-    const row = Math.floor(i / cols);
-    pos[name] = { x: x0 + col*dx, y: y0 + row*dy };
-  });
-  return pos;
-}
-
-function renderSkillGraph(mainCode, mountEl, {showRoot=true} = {}){
-  const names = allSubskillNamesForMain(mainCode);
-
-  const fixed = GRAPH_POS_BY_MAIN[mainCode] || null;
-  const auto = fixed ? null : autoLayoutNames(names);
+function renderMainTreeGraph(mainCode, mountEl){
+  const layout = computeTreeLayout(mainCode);
 
   const wrap = el(`<div class="graphWrap"><div class="graphStage"></div></div>`);
   const stage = wrap.querySelector(".graphStage");
-
-  if (!fixed){
-    const rows = Math.ceil(Math.max(1,names.length) / 4);
-    stage.style.width = "980px";
-    stage.style.height = Math.max(520, 80 + rows*130) + "px";
-  } else {
-    stage.style.width = "980px";
-    stage.style.height = "520px";
-  }
+  stage.style.width = layout.stageW + "px";
+  stage.style.height = layout.stageH + "px";
 
   const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
   svg.setAttribute("class","graphLines");
@@ -751,63 +635,60 @@ function renderSkillGraph(mainCode, mountEl, {showRoot=true} = {}){
 
   const nodeEls = new Map();
 
-  // Root node (SOC-style)
-  if (showRoot && fixed && fixed["__ROOT__"]){
-    const r = fixed["__ROOT__"];
-    const mainXp = state.skills[mainCode]?.totalXp || 0;
-    const mp = xpProgress(mainXp);
+  // Root main box
+  const mainXp = state.skills[mainCode]?.totalXp || 0;
+  const mp = xpProgress(mainXp);
+  const rootPos = layout.px[layout.rootId] || { left: 360, top: 40 };
 
-    const rootNode = el(`
-      <div class="node" style="left:${r.x}px;top:${r.y}px;width:${r.w||260}px">
-        <div class="nodeBtns">
-          <button class="nodeBtn primary" title="Select main">✓</button>
-          <button class="nodeBtn ok" title="Add subskill">＋</button>
-        </div>
-        <div class="nodeTitle">${escapeHtml(r.label||`${mainCode} (Main)`)}</div>
-        <div class="nodeMeta">
-          <span class="chip">${mainCode} — ${mainskillName(mainCode)}</span>
-          <span class="chip">Lv ${mp.lvl}</span>
-          <span class="chip">XP ${mainXp}</span>
-        </div>
+  const rootNode = el(`
+    <div class="node" style="left:${rootPos.left}px;top:${rootPos.top}px;width:260px">
+      <div class="nodeBtns">
+        <button class="nodeBtn primary" title="Select main">✓</button>
+        <button class="nodeBtn ok" title="Add top-level subskill">＋</button>
       </div>
-    `);
+      <div class="nodeTitle">${mainCode} — ${escapeHtml(mainskillName(mainCode))}</div>
+      <div class="nodeMeta">
+        <span class="chip">Lv ${mp.lvl}</span>
+        <span class="chip">XP ${mainXp}</span>
+      </div>
+    </div>
+  `);
 
-    const [selBtn, plusBtn] = rootNode.querySelectorAll("button");
-    selBtn.onclick = (e)=>{
-      e.stopPropagation();
-      state.ui.selectedMain = mainCode;
-      state.ui.selectedSub = "";
-      saveState(); render();
-    };
-    plusBtn.onclick = (e)=>{
-      e.stopPropagation();
-      openAddSubskillModal(mainCode);
-    };
+  const [rootSel, rootPlus] = rootNode.querySelectorAll("button");
+  rootSel.onclick = (e)=>{
+    e.stopPropagation();
+    state.ui.selectedMain = mainCode;
+    state.ui.selectedNode = null; // main selected
+    saveState();
+    render();
+  };
+  rootPlus.onclick = (e)=>{
+    e.stopPropagation();
+    openAddSubskillModal(mainCode, null);
+  };
+  rootNode.onclick = ()=>{
+    state.ui.selectedMain = mainCode;
+    state.ui.selectedNode = null;
+    saveState(); render();
+  };
 
-    rootNode.onclick = ()=>{
-      state.ui.selectedMain = mainCode;
-      state.ui.selectedSub = "";
-      saveState(); render();
-    };
-
-    stage.appendChild(rootNode);
-    nodeEls.set("__ROOT__", rootNode);
-  }
+  stage.appendChild(rootNode);
+  nodeEls.set(layout.rootId, rootNode);
 
   // Subskill nodes
-  for (const name of names){
-    const id = subId(mainCode, name);
-    const xp = state.subskills[id]?.totalXp || 0;
+  const all = nodesForMain(mainCode);
+  for (const n of all){
+    const xp = n.totalXp || 0;
     const p = xpProgress(xp);
+    const pos = layout.px[n.id] || { left: 40, top: 200 };
 
-    const pos = (fixed && fixed[name]) ? fixed[name] : (auto && auto[name]) || {x:40,y:40};
     const node = el(`
-      <div class="node" style="left:${pos.x}px;top:${pos.y}px">
+      <div class="node" style="left:${pos.left}px;top:${pos.top}px">
         <div class="nodeBtns">
           <button class="nodeBtn primary" title="Select">✓</button>
-          <button class="nodeBtn ok" title="Add New">＋</button>
+          <button class="nodeBtn ok" title="Add child subskill / mission / habit">＋</button>
         </div>
-        <div class="nodeTitle">${escapeHtml(name)}</div>
+        <div class="nodeTitle">${escapeHtml(n.name)}</div>
         <div class="nodeMeta">
           <span class="chip">Lv ${p.lvl}</span>
           <span class="chip">XP ${xp}</span>
@@ -815,42 +696,36 @@ function renderSkillGraph(mainCode, mountEl, {showRoot=true} = {}){
       </div>
     `);
 
-    const [selectBtn, plusBtn] = node.querySelectorAll("button");
-    selectBtn.onclick = (e)=>{
+    const [selBtn, plusBtn] = node.querySelectorAll("button");
+    selBtn.onclick = (e)=>{
       e.stopPropagation();
       state.ui.selectedMain = mainCode;
-      state.ui.selectedSub = (state.ui.selectedSub===id) ? "" : id;
+      state.ui.selectedNode = n.id;
       saveState(); render();
     };
     plusBtn.onclick = (e)=>{
       e.stopPropagation();
       state.ui.selectedMain = mainCode;
-      state.ui.selectedSub = id;
+      state.ui.selectedNode = n.id;
       saveState();
-      openPlusMenuForSubskill(mainCode, id);
+      openNodePlusMenu(mainCode, n.id);
     };
-
     node.onclick = ()=>{
       state.ui.selectedMain = mainCode;
-      state.ui.selectedSub = id;
+      state.ui.selectedNode = n.id;
       saveState(); render();
     };
 
     stage.appendChild(node);
-    nodeEls.set(name, node);
+    nodeEls.set(n.id, node);
   }
 
-  // Lines
   function drawLines(){
     while (svg.firstChild) svg.removeChild(svg.firstChild);
 
-    const edges = GRAPH_EDGES_BY_MAIN[mainCode] || [];
-    for (const [fromName, toName] of edges){
-      const fromKey = (fromName==="Social" && nodeEls.has("__ROOT__")) ? "__ROOT__" : fromName;
-      const toKey = toName;
-
-      const fromEl = nodeEls.get(fromKey);
-      const toEl = nodeEls.get(toKey);
+    for (const [fromId, toId] of layout.edges){
+      const fromEl = nodeEls.get(fromId);
+      const toEl = nodeEls.get(toId);
       if (!fromEl || !toEl) continue;
 
       const a = getNodeRect(stage, fromEl);
@@ -874,12 +749,83 @@ function renderSkillGraph(mainCode, mountEl, {showRoot=true} = {}){
   }
 
   drawLines();
-
   wrap.addEventListener("scroll", ()=>drawLines(), {passive:true});
   window.addEventListener("resize", ()=>drawLines(), {passive:true});
 
   mountEl.innerHTML = "";
   mountEl.appendChild(wrap);
+}
+
+/* =========================
+   PLUS MENU (on a node)
+========================= */
+function openNodePlusMenu(mainCode, nodeId){
+  const node = nodeById(nodeId);
+  const title = node ? node.name : "(main)";
+  const body = el(`
+    <div class="grid" style="gap:10px">
+      <div class="chip">Target: <b>${mainCode}</b> / ${escapeHtml(title)}</div>
+      <div class="grid cols3">
+        <button class="btn ok" id="addChild">+ Subskill (child)</button>
+        <button class="btn ok" id="addMission">+ Mission</button>
+        <button class="btn ok" id="addHabit">+ Habit</button>
+      </div>
+      <div class="hint">
+        Child subskill XP flows up: child → parent → main.
+      </div>
+    </div>
+  `);
+
+  body.querySelector("#addChild").onclick = ()=>{
+    closeModal();
+    openAddSubskillModal(mainCode, nodeId);
+  };
+  body.querySelector("#addMission").onclick = ()=>{
+    state.ui.selectedMain = mainCode;
+    state.ui.selectedNode = nodeId;
+    state.ui.activeTab = "MISSIONS";
+    saveState(); closeModal(); render();
+  };
+  body.querySelector("#addHabit").onclick = ()=>{
+    state.ui.selectedMain = mainCode;
+    state.ui.selectedNode = nodeId;
+    state.ui.activeTab = "HABITS";
+    saveState(); closeModal(); render();
+  };
+
+  openModal("Add New", body);
+}
+
+function openAddSubskillModal(mainCode, parentId){
+  const parentName = parentId ? (nodeById(parentId)?.name || "(unknown)") : "(main)";
+  const body = el(`
+    <div class="grid" style="gap:10px">
+      <div class="chip">Add subskill under <b>${mainCode} — ${escapeHtml(mainskillName(mainCode))}</b> / ${escapeHtml(parentName)}</div>
+      <div class="field">
+        <label class="muted">Subskill name</label>
+        <input id="name" placeholder="e.g. Public Speaking" />
+      </div>
+      <div class="row wrap">
+        <button class="btn ok" id="create">Create</button>
+        <button class="btn" id="cancel">Cancel</button>
+      </div>
+      <div class="hint">New subskill starts at Level 1 (XP 0). It will be connected with a line to its parent.</div>
+    </div>
+  `);
+
+  body.querySelector("#cancel").onclick = closeModal;
+  body.querySelector("#create").onclick = ()=>{
+    const name = body.querySelector("#name").value.trim();
+    if (!name) return alert("Name required.");
+    const id = ensureSubskill(mainCode, name, parentId ?? null);
+    state.ui.selectedMain = mainCode;
+    state.ui.selectedNode = id;
+    saveState();
+    closeModal();
+    render();
+  };
+
+  openModal("New Subskill", body);
 }
 
 /* =========================
@@ -891,7 +837,7 @@ function screenProfile(){
   const card1 = el(`
     <div class="card">
       <div class="kicker">Profile</div>
-      <h2 style="margin-top:6px">Player</h2>
+      <h2 style="margin-top:6px">${escapeHtml(state.profile.username || "Player")}</h2>
       <div class="hr"></div>
       <div class="field">
         <label class="muted">Username</label>
@@ -904,14 +850,14 @@ function screenProfile(){
       <div class="row" style="margin-top:10px">
         <button class="btn primary" id="saveProfile">Save</button>
       </div>
-      <div class="hint" style="margin-top:10px">All data is stored locally on your phone (localStorage) unless you export it.</div>
+      <div class="hint" style="margin-top:10px">Data is stored locally on this device unless you export it.</div>
     </div>
   `);
 
   const card2 = el(`
     <div class="card">
       <div class="kicker">Overview</div>
-      <h2 style="margin-top:6px">Total progress</h2>
+      <h2 style="margin-top:6px">All mainskills</h2>
       <div class="hr"></div>
       <div class="list" id="overviewList"></div>
     </div>
@@ -938,7 +884,7 @@ function screenProfile(){
       <div class="item">
         <div class="row sp">
           <div>
-            <div class="title">${m.code} — ${m.name}</div>
+            <div class="title">${m.code} — ${escapeHtml(m.name)}</div>
             <div class="muted">Level ${p.lvl} • Total XP ${xp}</div>
           </div>
           <span class="chip">Next: ${p.nextNeed ?? "MAX"}</span>
@@ -950,167 +896,140 @@ function screenProfile(){
   return c;
 }
 
+/* MAINSKILLS: LIST -> DETAIL PAGE */
 function screenMainSkills(){
-  const root = el(`<div class="grid"></div>`);
-
-  const top = el(`
-    <div class="card">
-      <div class="row sp wrap">
-        <div>
-          <div class="kicker">Main skills</div>
-          <h2 style="margin-top:6px">Boxes + connected lines</h2>
-          <div class="muted">Tap a skill to select it. Tap ✓ on a box to select target. Tap ＋ to add.</div>
-        </div>
-        <div class="row wrap" id="skillPills"></div>
-      </div>
-    </div>
-  `);
-  root.appendChild(top);
-
-  const pills = top.querySelector("#skillPills");
-  pills.innerHTML = "";
-  for (const m of MAINSKILLS){
-    const xp = state.skills[m.code]?.totalXp || 0;
-    const p = xpProgress(xp);
-    const b = el(`<button class="btn small ${state.ui.selectedMain===m.code?"primary":""}">${m.code} Lv ${p.lvl}</button>`);
-    b.onclick = ()=>{
-      state.ui.selectedMain = m.code;
-      state.ui.selectedSub = "";
-      saveState(); render();
-    };
-    pills.appendChild(b);
-  }
-
-  const selected = MAINSKILLS.find(x=>x.code===state.ui.selectedMain) || MAINSKILLS[0];
-  const xp = state.skills[selected.code]?.totalXp || 0;
-  const p = xpProgress(xp);
-
-  const detail = el(`
-    <div class="card">
-      <div class="row sp wrap">
-        <div>
-          <div class="kicker">${selected.code}</div>
-          <h2 style="margin-top:6px">${selected.name}</h2>
-          <div class="muted">Level ${p.lvl} • Total XP ${xp}</div>
-        </div>
-        <div class="row wrap">
-          <button class="btn ok" id="newSub">+ Subskill</button>
-          <button class="btn ok" id="quickMission">+ Mission</button>
-          <button class="btn ok" id="quickHabit">+ Habit</button>
-        </div>
-      </div>
-      <div class="xpbar" style="margin-top:10px"><div style="width:${Math.round(p.pct*100)}%"></div></div>
-      <div class="hr"></div>
-
-      <div class="twoCol">
-        <div>
-          <h3>Subskills graph</h3>
-          <div id="graphMount"></div>
-          <div class="hint" style="margin-top:8px">
-            Note: only SOC has hand-drawn connections right now. Others show boxes; add edges later to draw lines.
-          </div>
-        </div>
-        <div>
-          <h3>Create (targets selected subskill if chosen)</h3>
-          ${createFormHtml()}
-        </div>
-      </div>
-    </div>
-  `);
-  root.appendChild(detail);
-
-  detail.querySelector("#newSub").onclick = ()=> openAddSubskillModal(selected.code);
-  detail.querySelector("#quickMission").onclick = ()=>{ state.ui.activeTab="MISSIONS"; saveState(); render(); };
-  detail.querySelector("#quickHabit").onclick = ()=>{ state.ui.activeTab="HABITS"; saveState(); render(); };
-
-  renderSkillGraph(selected.code, detail.querySelector("#graphMount"), {showRoot: selected.code==="SOC"});
-
-  bindCreateForm(detail);
-  return root;
+  if (state.ui.view === "DETAIL") return screenMainSkillDetail(state.ui.selectedMain);
+  return screenMainSkillsList();
 }
 
-function screenSkillsMap(){
+function screenMainSkillsList(){
   const root = el(`
     <div class="grid">
       <div class="card">
-        <div class="kicker">Skills map</div>
-        <h2 style="margin-top:6px">All mainskills + subskills (boxed + lines)</h2>
-        <div class="muted">Expand mainskills. Use ✓ to target. Use ＋ to add Subskill/Mission/Habit.</div>
+        <div class="kicker">Main skills</div>
+        <h2 style="margin-top:6px">Tap a mainskill to open its page</h2>
+        <div class="muted">Each mainskill has its own tree of subskills. XP flows up the tree.</div>
       </div>
-      <div class="grid" id="mapList"></div>
+      <div class="card">
+        <h3>All mainskills</h3>
+        <div class="list" id="list"></div>
+      </div>
     </div>
   `);
 
-  const list = root.querySelector("#mapList");
+  const list = root.querySelector("#list");
   list.innerHTML = "";
 
   for (const m of MAINSKILLS){
-    const mxp = state.skills[m.code]?.totalXp || 0;
-    const mp = xpProgress(mxp);
-
-    const d = el(`
-      <details>
-        <summary>
-          <div class="sumLeft">
-            <div class="title">${m.code} — ${m.name}</div>
-            <div class="muted">Level ${mp.lvl} • Total XP ${mxp}</div>
-          </div>
-          <div class="sumRight">
-            <span class="chip">${allSubskillNamesForMain(m.code).length} subskills</span>
-            <button class="btn small ${state.ui.selectedMain===m.code?"primary":""}" type="button">Select</button>
-          </div>
-        </summary>
-        <div class="hr"></div>
-        <div class="twoCol">
+    const xp = state.skills[m.code]?.totalXp || 0;
+    const p = xpProgress(xp);
+    const count = nodesForMain(m.code).length;
+    const it = el(`
+      <div class="item">
+        <div class="row sp wrap">
           <div>
-            <div class="row sp wrap">
-              <h3 style="margin:0">Subskills graph</h3>
-              <button class="btn small ok" type="button" data-addsub>+ Subskill</button>
+            <div class="title">${m.code} — ${escapeHtml(m.name)}</div>
+            <div class="meta">
+              <span class="chip">Lv ${p.lvl}</span>
+              <span class="chip">XP ${xp}</span>
+              <span class="chip">${count} subskills</span>
             </div>
-            <div id="graphMount" style="margin-top:10px"></div>
-            <div class="hint" style="margin-top:8px">Lines appear when edges are defined for that mainskill.</div>
           </div>
-          <div>
-            <h3>Create (uses selected subskill)</h3>
-            ${createFormHtml()}
+          <div class="row wrap">
+            <button class="btn primary">Open</button>
           </div>
         </div>
-      </details>
+      </div>
     `);
-
-    const selectBtn = d.querySelector("summary button");
-    selectBtn.onclick = (e)=>{
-      e.preventDefault(); e.stopPropagation();
+    it.querySelector("button").onclick = ()=>{
       state.ui.selectedMain = m.code;
-      state.ui.selectedSub = "";
-      saveState(); render();
+      state.ui.selectedNode = null;
+      state.ui.view = "DETAIL";
+      saveState();
+      render();
     };
-
-    d.querySelector("[data-addsub]").onclick = ()=> openAddSubskillModal(m.code);
-
-    renderSkillGraph(m.code, d.querySelector("#graphMount"), {showRoot: m.code==="SOC"});
-
-    bindCreateForm(d);
-    list.appendChild(d);
+    list.appendChild(it);
   }
 
   return root;
 }
 
-function screenMissions(){
+function screenMainSkillDetail(mainCode){
+  const m = MAINSKILLS.find(x=>x.code===mainCode) || MAINSKILLS[0];
+  const mxp = state.skills[m.code]?.totalXp || 0;
+  const mp = xpProgress(mxp);
+
+  const selectedNode = nodeById(state.ui.selectedNode);
+  const selectedLabel = selectedNode ? selectedNode.name : "(main)";
+
   const root = el(`
     <div class="grid">
       <div class="card">
         <div class="row sp wrap">
           <div>
-            <div class="kicker">Missions</div>
-            <h2 style="margin-top:6px">Finish gives +1 XP (UNDO available)</h2>
-            <div class="muted">Target: ${state.ui.selectedMain} ${state.ui.selectedSub ? "/ " + (state.subskills[state.ui.selectedSub]?.name||"") : ""}</div>
+            <div class="kicker">${m.code}</div>
+            <h2 style="margin-top:6px">${escapeHtml(m.name)} — Main Skill Page</h2>
+            <div class="muted">Level ${mp.lvl} • Total XP ${mxp}</div>
+            <div class="hint" style="margin-top:6px">
+              Selected target: <span class="chip">${m.code} / ${escapeHtml(selectedLabel)}</span>
+            </div>
+          </div>
+          <div class="row wrap">
+            <button class="btn" id="back">← Back to list</button>
+            <button class="btn ok" id="addTop">+ Top subskill</button>
           </div>
         </div>
+        <div class="xpbar" style="margin-top:10px"><div style="width:${Math.round(mp.pct*100)}%"></div></div>
+        <div class="hr"></div>
+
+        <div class="grid cols2">
+          <div>
+            <h3>Tree (boxes + lines)</h3>
+            <div id="graphMount"></div>
+            <div class="hint" style="margin-top:8px">
+              Tap a node to target it. Tap ＋ on a node to add a child subskill / mission / habit.
+            </div>
+          </div>
+
+          <div>
+            <h3>Create (targets selected node)</h3>
+            ${createFormHtml()}
+          </div>
+        </div>
+      </div>
+    </div>
+  `);
+
+  root.querySelector("#back").onclick = ()=>{
+    state.ui.view = "LIST";
+    state.ui.selectedNode = null;
+    saveState(); render();
+  };
+  root.querySelector("#addTop").onclick = ()=> openAddSubskillModal(mainCode, null);
+
+  renderMainTreeGraph(mainCode, root.querySelector("#graphMount"));
+
+  bindCreateForm(root, ()=>({ mainCode: state.ui.selectedMain, nodeId: state.ui.selectedNode }));
+
+  return root;
+}
+
+/* MISSIONS */
+function screenMissions(){
+  const mainCode = state.ui.selectedMain || "SOC";
+  const nodeId = state.ui.selectedNode || null;
+  const node = nodeById(nodeId);
+
+  const root = el(`
+    <div class="grid">
+      <div class="card">
+        <div class="kicker">Missions</div>
+        <h2 style="margin-top:6px">Finish gives +1 XP (UNDO available)</h2>
+        <div class="muted">Target: ${mainCode} / ${escapeHtml(node ? node.name : "(main)")}</div>
         <div class="hr"></div>
         ${createFormHtml()}
       </div>
+
       <div class="card">
         <h3>Your missions</h3>
         <div class="list" id="list"></div>
@@ -1118,28 +1037,28 @@ function screenMissions(){
     </div>
   `);
 
-  bindCreateForm(root);
+  bindCreateForm(root, ()=>({ mainCode: state.ui.selectedMain, nodeId: state.ui.selectedNode }));
 
   const list = root.querySelector("#list");
   list.innerHTML = "";
 
   if (!state.missions.length){
     list.appendChild(el(`<div class="muted">No missions yet. Add one above.</div>`));
+    return root;
   }
 
-  for (const m of state.missions){
-    const subName = m.subId && state.subskills[m.subId] ? state.subskills[m.subId].name : "";
+  for (const ms of state.missions){
+    const n = nodeById(ms.nodeId);
     const it = el(`
       <div class="item">
         <div class="row sp wrap">
           <div>
-            <div class="title">${escapeHtml(m.title)}</div>
+            <div class="title">${escapeHtml(ms.title)}</div>
             <div class="meta">
-              <span class="chip">${m.mainCode} ${subName ? " / " + escapeHtml(subName) : ""}</span>
-              <span class="chip">Points: ${m.points}</span>
-              <span class="chip">Created: ${formatDateShort(m.createdAt)}</span>
+              <span class="chip">${ms.mainCode} / ${escapeHtml(n ? n.name : "(main)")}</span>
+              <span class="chip">Points: ${ms.points||0}</span>
             </div>
-            ${m.desc ? `<div class="muted" style="margin-top:6px">${escapeHtml(m.desc)}</div>` : ""}
+            ${ms.desc ? `<div class="muted" style="margin-top:6px">${escapeHtml(ms.desc)}</div>` : ""}
           </div>
           <div class="row wrap">
             <button class="btn small ok">Finish (+1)</button>
@@ -1153,20 +1072,19 @@ function screenMissions(){
     const [finishBtn, undoBtn, delBtn] = it.querySelectorAll("button");
 
     finishBtn.onclick = ()=>{
-      m.points = (m.points||0) + 1;
-      addXp(m.mainCode, m.subId, +1);
+      ms.points = (ms.points||0) + 1;
+      addXpFlow(ms.mainCode, ms.nodeId, +1);
       saveState(); render();
     };
     undoBtn.onclick = ()=>{
-      if ((m.points||0) <= 0) return;
-      m.points = (m.points||0) - 1;
-      addXp(m.mainCode, m.subId, -1);
+      if ((ms.points||0) <= 0) return;
+      ms.points = (ms.points||0) - 1;
+      addXpFlow(ms.mainCode, ms.nodeId, -1);
       saveState(); render();
     };
     delBtn.onclick = ()=>{
-      const ok = confirm(`Delete mission "${m.title}"?`);
-      if (!ok) return;
-      state.missions = state.missions.filter(x=>x.id!==m.id);
+      if (!confirm(`Delete mission "${ms.title}"?`)) return;
+      state.missions = state.missions.filter(x=>x.id!==ms.id);
       saveState(); render();
     };
 
@@ -1176,20 +1094,22 @@ function screenMissions(){
   return root;
 }
 
+/* HABITS (simple list + delete; doesn’t grant XP by default) */
 function screenHabits(){
+  const mainCode = state.ui.selectedMain || "SOC";
+  const nodeId = state.ui.selectedNode || null;
+  const node = nodeById(nodeId);
+
   const root = el(`
     <div class="grid">
       <div class="card">
-        <div class="row sp wrap">
-          <div>
-            <div class="kicker">Habits</div>
-            <h2 style="margin-top:6px">Track recurring stuff</h2>
-            <div class="muted">Target: ${state.ui.selectedMain} ${state.ui.selectedSub ? "/ " + (state.subskills[state.ui.selectedSub]?.name||"") : ""}</div>
-          </div>
-        </div>
+        <div class="kicker">Habits</div>
+        <h2 style="margin-top:6px">Habits list</h2>
+        <div class="muted">Target: ${mainCode} / ${escapeHtml(node ? node.name : "(main)")}</div>
         <div class="hr"></div>
         ${createFormHtml()}
       </div>
+
       <div class="card">
         <h3>Your habits</h3>
         <div class="list" id="list"></div>
@@ -1197,64 +1117,37 @@ function screenHabits(){
     </div>
   `);
 
-  bindCreateForm(root);
+  bindCreateForm(root, ()=>({ mainCode: state.ui.selectedMain, nodeId: state.ui.selectedNode }));
 
   const list = root.querySelector("#list");
   list.innerHTML = "";
 
   if (!state.habits.length){
     list.appendChild(el(`<div class="muted">No habits yet. Add one above.</div>`));
+    return root;
   }
 
-  const items = [...state.habits].sort((a,b)=>{
-    const da = a.dueISO ? new Date(a.dueISO).getTime() : Infinity;
-    const db = b.dueISO ? new Date(b.dueISO).getTime() : Infinity;
-    if (da!==db) return da-db;
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-  });
-
-  for (const h of items){
-    const subName = h.subId && state.subskills[h.subId] ? state.subskills[h.subId].name : "";
-    const dLeft = daysUntil(h.dueISO);
-    const dueTxt = h.dueISO ? `${formatDateShort(h.dueISO)} (${dLeft} days)` : "—";
+  for (const h of state.habits){
+    const n = nodeById(h.nodeId);
     const it = el(`
       <div class="item">
         <div class="row sp wrap">
           <div>
             <div class="title">${escapeHtml(h.title)}</div>
             <div class="meta">
-              <span class="chip">${h.mainCode} ${subName ? " / " + escapeHtml(subName) : ""}</span>
-              <span class="chip">Due: ${dueTxt}</span>
-              <span class="chip">Created: ${formatDateShort(h.createdAt)}</span>
+              <span class="chip">${h.mainCode} / ${escapeHtml(n ? n.name : "(main)")}</span>
             </div>
             ${h.desc ? `<div class="muted" style="margin-top:6px">${escapeHtml(h.desc)}</div>` : ""}
           </div>
           <div class="row wrap">
-            <button class="btn small">Edit</button>
             <button class="btn small bad">Delete</button>
           </div>
         </div>
       </div>
     `);
 
-    const [editBtn, delBtn] = it.querySelectorAll("button");
-
-    editBtn.onclick = ()=>{
-      const newTitle = prompt("Edit habit title:", h.title);
-      if (newTitle===null) return;
-      h.title = newTitle.trim() || h.title;
-
-      const newDue = prompt("Edit due date (YYYY-MM-DD) or blank:", h.dueISO ? new Date(h.dueISO).toISOString().slice(0,10) : "");
-      if (newDue===null) { saveState(); render(); return; }
-      if (!newDue.trim()) h.dueISO = "";
-      else h.dueISO = new Date(newDue.trim()+"T00:00:00").toISOString();
-
-      saveState(); render();
-    };
-
-    delBtn.onclick = ()=>{
-      const ok = confirm(`Delete habit "${h.title}"?`);
-      if (!ok) return;
+    it.querySelector("button").onclick = ()=>{
+      if (!confirm(`Delete habit "${h.title}"?`)) return;
       state.habits = state.habits.filter(x=>x.id!==h.id);
       saveState(); render();
     };
@@ -1265,204 +1158,41 @@ function screenHabits(){
   return root;
 }
 
-function reorder(arr, id, dir){
-  const i = arr.findIndex(x=>x.id===id);
-  if (i<0) return;
-  const j = i + dir;
-  if (j<0 || j>=arr.length) return;
-  const tmp = arr[i]; arr[i]=arr[j]; arr[j]=tmp;
-}
-
+/* PRIORITIES + WISHLIST (simple placeholders you can expand) */
 function screenPriorities(){
-  const root = el(`
-    <div class="grid">
-      <div class="card">
-        <div class="row sp wrap">
-          <div>
-            <div class="kicker">Priorities</div>
-            <h2 style="margin-top:6px">Move items up/down</h2>
-          </div>
-        </div>
-        <div class="hr"></div>
-        <div class="twoCol">
-          <div class="field">
-            <label class="muted">Title</label>
-            <input id="title" placeholder="e.g. Weight" />
-          </div>
-          <div class="field">
-            <label class="muted">Tag (skill code)</label>
-            <select id="tag"></select>
-          </div>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <button class="btn primary" id="create">Add</button>
-        </div>
-      </div>
-      <div class="card">
-        <h3>List</h3>
-        <div class="list" id="list"></div>
-      </div>
+  return el(`
+    <div class="card">
+      <div class="kicker">Priorities</div>
+      <h2 style="margin-top:6px">Coming next</h2>
+      <div class="muted">We can rebuild your exact up/down UI here next.</div>
     </div>
   `);
-
-  const tagSel = root.querySelector("#tag");
-  for (const m of MAINSKILLS){
-    const o = document.createElement("option");
-    o.value = m.code;
-    o.textContent = `${m.code} — ${m.name}`;
-    tagSel.appendChild(o);
-  }
-
-  root.querySelector("#create").onclick = ()=>{
-    const title = root.querySelector("#title").value.trim();
-    const tag = tagSel.value;
-    if (!title) return alert("Title required.");
-    state.priorities.push({id:cryptoId(), title, tag});
-    root.querySelector("#title").value = "";
-    saveState(); render();
-  };
-
-  const list = root.querySelector("#list");
-  list.innerHTML = "";
-  if (!state.priorities.length) list.appendChild(el(`<div class="muted">No priorities yet.</div>`));
-
-  state.priorities.forEach(p=>{
-    const it = el(`
-      <div class="item">
-        <div class="row sp wrap">
-          <div>
-            <div class="title">${escapeHtml(p.title)}</div>
-            <div class="muted">${p.tag} — ${mainskillName(p.tag)}</div>
-          </div>
-          <div class="row wrap">
-            <button class="btn small">▲</button>
-            <button class="btn small">▼</button>
-            <button class="btn small bad">Delete</button>
-          </div>
-        </div>
-      </div>
-    `);
-    const [up,down,del] = it.querySelectorAll("button");
-    up.onclick = ()=>{ reorder(state.priorities, p.id, -1); saveState(); render(); };
-    down.onclick = ()=>{ reorder(state.priorities, p.id, +1); saveState(); render(); };
-    del.onclick = ()=>{
-      if (!confirm(`Delete "${p.title}"?`)) return;
-      state.priorities = state.priorities.filter(x=>x.id!==p.id);
-      saveState(); render();
-    };
-    list.appendChild(it);
-  });
-
-  return root;
 }
-
 function screenWishlist(){
-  const root = el(`
-    <div class="grid">
-      <div class="card">
-        <div class="row sp wrap">
-          <div>
-            <div class="kicker">Wishlist</div>
-            <h2 style="margin-top:6px">Move items up/down</h2>
-          </div>
-        </div>
-        <div class="hr"></div>
-        <div class="grid cols3">
-          <div class="field">
-            <label class="muted">Item</label>
-            <input id="title" placeholder="e.g. Barbell" />
-          </div>
-          <div class="field">
-            <label class="muted">Cost</label>
-            <input id="cost" placeholder="e.g. 599 kr" />
-          </div>
-          <div class="field">
-            <label class="muted">Tag (skill code)</label>
-            <select id="tag"></select>
-          </div>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <button class="btn primary" id="create">Add</button>
-        </div>
-      </div>
-      <div class="card">
-        <h3>List</h3>
-        <div class="list" id="list"></div>
-      </div>
+  return el(`
+    <div class="card">
+      <div class="kicker">Wishlist</div>
+      <h2 style="margin-top:6px">Coming next</h2>
+      <div class="muted">We can rebuild your exact up/down UI here next.</div>
     </div>
   `);
-
-  const tagSel = root.querySelector("#tag");
-  for (const m of MAINSKILLS){
-    const o = document.createElement("option");
-    o.value = m.code;
-    o.textContent = `${m.code} — ${m.name}`;
-    tagSel.appendChild(o);
-  }
-
-  root.querySelector("#create").onclick = ()=>{
-    const title = root.querySelector("#title").value.trim();
-    const cost = root.querySelector("#cost").value.trim();
-    const tag = tagSel.value;
-    if (!title) return alert("Item required.");
-    state.wishlist.push({id:cryptoId(), title, cost, tag});
-    root.querySelector("#title").value = "";
-    root.querySelector("#cost").value = "";
-    saveState(); render();
-  };
-
-  const list = root.querySelector("#list");
-  list.innerHTML = "";
-  if (!state.wishlist.length) list.appendChild(el(`<div class="muted">No wishlist items yet.</div>`));
-
-  state.wishlist.forEach(w=>{
-    const it = el(`
-      <div class="item">
-        <div class="row sp wrap">
-          <div>
-            <div class="title">${escapeHtml(w.title)}</div>
-            <div class="meta">
-              <span class="chip">${escapeHtml(w.cost || "—")}</span>
-              <span class="chip">${w.tag} — ${mainskillName(w.tag)}</span>
-            </div>
-          </div>
-          <div class="row wrap">
-            <button class="btn small">▲</button>
-            <button class="btn small">▼</button>
-            <button class="btn small bad">Delete</button>
-          </div>
-        </div>
-      </div>
-    `);
-    const [up,down,del] = it.querySelectorAll("button");
-    up.onclick = ()=>{ reorder(state.wishlist, w.id, -1); saveState(); render(); };
-    down.onclick = ()=>{ reorder(state.wishlist, w.id, +1); saveState(); render(); };
-    del.onclick = ()=>{
-      if (!confirm(`Delete "${w.title}"?`)) return;
-      state.wishlist = state.wishlist.filter(x=>x.id!==w.id);
-      saveState(); render();
-    };
-    list.appendChild(it);
-  });
-
-  return root;
 }
 
 /* =========================
-   RENDER ROUTER
+   ROUTER RENDER
 ========================= */
 function render(){
   renderTabs();
   mainEl.innerHTML = "";
   const tab = state.ui.activeTab;
+
   if (tab==="PROFILE") mainEl.appendChild(screenProfile());
   else if (tab==="MAINSKILLS") mainEl.appendChild(screenMainSkills());
-  else if (tab==="SKILLSMAP") mainEl.appendChild(screenSkillsMap());
   else if (tab==="MISSIONS") mainEl.appendChild(screenMissions());
   else if (tab==="HABITS") mainEl.appendChild(screenHabits());
   else if (tab==="PRIORITIES") mainEl.appendChild(screenPriorities());
   else if (tab==="WISHLIST") mainEl.appendChild(screenWishlist());
-  else mainEl.appendChild(screenProfile());
+  else mainEl.appendChild(screenMainSkills());
 }
 
 /* =========================
@@ -1472,7 +1202,7 @@ document.getElementById("exportBtn").onclick = ()=>{
   const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "gogetta_gg_export.json";
+  a.download = "gogetta_export.json";
   a.click();
   URL.revokeObjectURL(a.href);
 };
@@ -1511,4 +1241,5 @@ document.getElementById("resetBtn").onclick = ()=>{
 render();
 </script>
 </body>
+</html>
 </html>

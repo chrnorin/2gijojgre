@@ -1,0 +1,1514 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#111111" />
+  <title>GoGetta GG</title>
+
+  <style>
+    :root{
+      --bg:#0b0b0c; --card:#141417; --card2:#1b1b20; --txt:#f2f2f2; --muted:#a7a7b3;
+      --line:#2a2a33; --accent:#66a3ff; --ok:#52d273; --warn:#ffcc66; --bad:#ff6b6b;
+      --chip:#23232b;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    button,input,select,textarea{font:inherit}
+    a{color:inherit}
+    .app{max-width:980px;margin:0 auto;min-height:100svh;display:flex;flex-direction:column}
+    header{position:sticky;top:0;z-index:20;background:rgba(11,11,12,.92);backdrop-filter: blur(10px);border-bottom:1px solid var(--line)}
+    .topbar{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px}
+    .brand{font-weight:800;letter-spacing:.4px}
+    .tabs{display:flex;gap:8px;overflow:auto;padding:10px 10px 12px}
+    .tab{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--txt);
+      padding:8px 10px;border-radius:12px;opacity:.9}
+    .tab.active{border-color:rgba(102,163,255,.7);box-shadow:0 0 0 3px rgba(102,163,255,.12) inset;opacity:1}
+    main{flex:1;padding:12px}
+    .grid{display:grid;gap:10px}
+    @media (min-width:760px){ .grid.cols2{grid-template-columns:1fr 1fr} .grid.cols3{grid-template-columns:1fr 1fr 1fr} }
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
+    .card h2,.card h3{margin:0 0 10px}
+    .row{display:flex;gap:10px;align-items:center}
+    .row.wrap{flex-wrap:wrap}
+    .sp{justify-content:space-between}
+    .muted{color:var(--muted)}
+    .pill{display:inline-flex;gap:6px;align-items:center;background:var(--chip);border:1px solid var(--line);
+      padding:6px 10px;border-radius:999px;color:var(--muted)}
+    .btn{border:1px solid var(--line);background:var(--card2);color:var(--txt);
+      padding:8px 10px;border-radius:12px;cursor:pointer}
+    .btn:hover{filter:brightness(1.05)}
+    .btn.primary{border-color:rgba(102,163,255,.6)}
+    .btn.ok{border-color:rgba(82,210,115,.55)}
+    .btn.bad{border-color:rgba(255,107,107,.6)}
+    .btn.ghost{background:transparent}
+    .btn.small{padding:6px 8px;border-radius:10px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    input,select,textarea{
+      background:#0f0f12;border:1px solid var(--line);color:var(--txt);
+      padding:10px;border-radius:12px;outline:none
+    }
+    textarea{min-height:86px;resize:vertical}
+    .hr{height:1px;background:var(--line);margin:10px 0}
+    .list{display:flex;flex-direction:column;gap:8px}
+    .item{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:10px}
+    .title{font-weight:700}
+    .meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);margin-top:4px}
+    .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--muted)}
+    .xpbar{height:10px;background:#0f0f12;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+    .xpbar > div{height:100%;background:linear-gradient(90deg, rgba(102,163,255,.95), rgba(82,210,115,.95))}
+    .kicker{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
+    details{border:1px solid var(--line);background:var(--card);border-radius:16px;padding:10px}
+    summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    summary::-webkit-details-marker{display:none}
+    .sumLeft{display:flex;flex-direction:column;gap:2px}
+    .sumRight{display:flex;gap:8px;align-items:center}
+    .twoCol{display:grid;gap:10px}
+    @media (min-width:760px){ .twoCol{grid-template-columns: 1fr 1fr} }
+    .hint{font-size:12px;color:var(--muted)}
+    .danger{color:var(--bad)}
+    .oktxt{color:var(--ok)}
+    .accent{color:var(--accent)}
+
+    /* Modal */
+    .modalBackdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.62);
+      display:none; align-items:center; justify-content:center; padding:14px; z-index:999;
+    }
+    .modalBackdrop.show{display:flex}
+    .modal{
+      width:min(560px,100%); background:var(--card); border:1px solid var(--line);
+      border-radius:18px; padding:12px;
+      box-shadow:0 20px 80px rgba(0,0,0,.55);
+    }
+    .modal header{position:static;background:transparent;border:0;padding:0;margin-bottom:10px}
+    .modalTitle{font-weight:800}
+
+    /* ===== Graph UI (boxes + lines) ===== */
+    .graphWrap{
+      position:relative;
+      width:100%;
+      min-height:420px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+      overflow:auto;
+    }
+    .graphStage{
+      position:relative;
+      width:980px;
+      height:520px;
+    }
+    .graphLines{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+    }
+    .node{
+      position:absolute;
+      width:180px;
+      border:1px solid var(--line);
+      background:var(--card2);
+      border-radius:14px;
+      padding:10px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .node:hover{ filter:brightness(1.06); }
+    .nodeTitle{ font-weight:800; }
+    .nodeMeta{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:12px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .nodeBtns{
+      position:absolute;
+      top:8px;
+      right:8px;
+      display:flex;
+      gap:6px;
+    }
+    .nodeBtn{
+      border:1px solid var(--line);
+      background:transparent;
+      color:var(--txt);
+      width:28px;height:28px;
+      border-radius:10px;
+      cursor:pointer;
+    }
+    .nodeBtn.ok{ border-color:rgba(82,210,115,.55); }
+    .nodeBtn.primary{ border-color:rgba(102,163,255,.6); }
+  </style>
+</head>
+
+<body>
+<div class="app">
+  <header>
+    <div class="topbar">
+      <div class="brand">GoGetta GG</div>
+      <div class="row">
+        <button class="btn small ghost" id="exportBtn">Export</button>
+        <button class="btn small ghost" id="importBtn">Import</button>
+        <button class="btn small ghost danger" id="resetBtn">Reset</button>
+      </div>
+    </div>
+    <div class="tabs" id="tabs"></div>
+  </header>
+
+  <main id="main"></main>
+</div>
+
+<!-- Modal -->
+<div class="modalBackdrop" id="modalBackdrop" role="dialog" aria-modal="true">
+  <div class="modal">
+    <header class="row sp">
+      <div class="modalTitle" id="modalTitle">Add New</div>
+      <button class="btn small ghost" id="modalClose">✕</button>
+    </header>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+/* =========================
+   XP TABLE (TOTAL XP PER LEVEL)
+========================= */
+const XP_TOTAL_BY_LEVEL = new Map([
+  [1,0],[2,2],[3,4],[4,6],[5,8],[6,11],[7,14],[8,17],[9,20],[10,24],
+  [11,26],[12,28],[13,30],[14,31],[15,32],[16,34],[17,36],[18,38],[19,39],[20,40],
+  [21,43],[22,46],[23,49],[24,52],[25,55],[26,58],[27,61],[28,64],[29,67],[30,70],
+  [31,74],[32,78],[33,82],[34,86],[35,90],[36,94],[37,98],[38,102],[39,106],[40,110],
+  [41,117],[42,124],[43,131],[44,138],[45,145],[46,153],[47,161],[48,169],[49,177],[50,183],
+  [51,192],[52,201],[53,210],[54,219],[55,230],[56,245],[57,260],[58,275],[59,290],[60,303],
+  [61,318],[62,333],[63,348],[64,363],[65,380],[66,405],[67,430],[68,455],[69,480],[70,503],
+  [71,532],[72,561],[73,590],[74,620],[75,650],[76,687],[77,724],[78,761],[79,798],[80,834],
+  [81,867],[82,900],[83,933],[84,966],[85,1000],[86,1030],[87,1060],[88,1090],[89,1120],[90,1150],
+  [91,1176],[92,1202],[93,1228],[94,1254],[95,1280],[96,1306],[97,1332],[98,1358],[99,1384],
+]);
+
+function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
+function levelFromTotalXp(totalXp){
+  let lvl = 1;
+  for (let i=1;i<=99;i++){
+    const need = XP_TOTAL_BY_LEVEL.get(i) ?? Infinity;
+    if (need <= totalXp) lvl = i; else break;
+  }
+  return lvl;
+}
+function xpProgress(totalXp){
+  const lvl = levelFromTotalXp(totalXp);
+  const curNeed = XP_TOTAL_BY_LEVEL.get(lvl) ?? 0;
+  const nextNeed = XP_TOTAL_BY_LEVEL.get(lvl+1);
+  if (!nextNeed && lvl>=99) return {lvl, cur: totalXp-curNeed, need: 0, pct: 1, nextNeed: null};
+  const span = nextNeed - curNeed;
+  const cur = totalXp - curNeed;
+  const pct = span>0 ? clamp(cur/span, 0, 1) : 0;
+  return {lvl, cur, need: span, pct, nextNeed};
+}
+
+/* =========================
+   MAINSKILLS + SUBSKILLS (FROM YOUR MAP IMAGE + USER ADDED)
+========================= */
+const MAINSKILLS = [
+  { code:"SOC", name:"Social" },
+  { code:"MEN", name:"Mental" },
+  { code:"FIN", name:"Financial" },
+  { code:"PHY", name:"Physical" },
+  { code:"LEA", name:"Leadership" },
+  { code:"APP", name:"Appearance" },
+  { code:"DIE", name:"Diet" },
+  { code:"SCH", name:"School" },
+  { code:"HOM", name:"Homelife" },
+  { code:"CAR", name:"Career" },
+  { code:"SID", name:"Sidehustle" },
+  { code:"BUS", name:"Business" },
+  { code:"HOB", name:"Hobbies" },
+  { code:"WOR", name:"Work" },
+  { code:"DAT", name:"Dating" },
+];
+
+const MAP_SUBSKILLS_BY_MAIN = {
+  SOC: [
+    "Friends","Communication","Relationship","Family","Social Media",
+    "Contacts/Networking","Conversations","Hooking/Flirting","Calls","Winks",
+    "Group Conversations","Conversations with Stranger"
+  ],
+  MEN: [
+    "Knowledge","Creative/Endeavours","Spiritual","Nutrition","Reading","Meditation",
+    "Sex","Cold Showers","Yoga","Research","Motivation","No Gaming / No Social Media",
+    "Power","Kindness","Pray/Manifest","Gratitude"
+  ],
+  FIN: [
+    "Economy","Spreadsheet","Budget","Saving","HB/Account","Savings Account",
+    "Investing","Crypto","Stocks","CNS","FM Loans","Gifts","Bills"
+  ],
+  PHY: [
+    "Workout","Cardio","Sports Activity","Workout Equipment",
+    "Gym","Volume","Calories","Vitamins/Supplements",
+    "Arms","Mountaineering","Sauna",
+    "Chest","Steps","Running",
+    "Legs","Homegym","Dieting"
+  ],
+  APP: [
+    "Hygiene","Grooming","Flowers","Transportation",
+    "Personal Development","Brushing","Add Beauty Daily","Bike",
+    "Haircuts","Fighter","BKL"
+  ],
+  DIE: [
+    "Health","Kill Fuel","Invest in Eli","Food Logging / Cal Counting",
+    "OM","LCL Meals","Research Diet","Weight",
+    "Control Impulses","Supplements"
+  ],
+  HOM: [
+    "Groceries","Cleaning","Decorum","Washing Clothes","Cooking","Computer","Flowers"
+  ],
+  SCH: [
+    "Theory","Practice","AI in School"
+  ],
+  LEA: [], CAR: [], SID: [], BUS: [], HOB: [], WOR: [], DAT: [],
+};
+
+function subId(mainCode, subName){ return `${mainCode}__${subName}`; }
+
+/* =========================
+   CONNECTED GRAPH (LINES + BOXES)
+   - SOC has a hand layout and edges matching your Tab 2B1 vibe.
+   - Other mainskills: boxes still render, lines appear only if you add edges/layout later.
+========================= */
+const GRAPH_EDGES_BY_MAIN = {
+  SOC: [
+    ["Social", "Friends"],
+    ["Social", "Communication"],
+    ["Social", "Family"],
+
+    ["Friends", "Contacts/Networking"],
+
+    ["Communication", "Conversations"],
+    ["Communication", "Calls"],
+
+    ["Conversations", "Group Conversations"],
+    ["Conversations", "Conversations with Stranger"],
+  ],
+};
+
+const GRAPH_POS_BY_MAIN = {
+  SOC: {
+    "__ROOT__": { x: 360, y: 40, w: 260, h: 90, label: "SOCIAL (Main)" },
+
+    "Friends": { x: 210, y: 180 },
+    "Communication": { x: 420, y: 180 },
+    "Family": { x: 630, y: 180 },
+
+    "Contacts/Networking": { x: 160, y: 310 },
+
+    "Conversations": { x: 360, y: 310 },
+    "Calls": { x: 520, y: 310 },
+
+    "Group Conversations": { x: 300, y: 420 },
+    "Conversations with Stranger": { x: 500, y: 420 },
+  }
+};
+
+/* =========================
+   STORAGE
+========================= */
+const STORE_KEY = "gogetta_gg_v4";
+
+function cryptoId(){
+  if (crypto?.randomUUID) return crypto.randomUUID();
+  return Math.random().toString(16).slice(2) + Date.now().toString(16);
+}
+
+function defaultState(){
+  const skills = {};
+  for (const m of MAINSKILLS) skills[m.code] = { totalXp: 0 };
+
+  const subskills = {};
+  for (const m of MAINSKILLS){
+    const list = MAP_SUBSKILLS_BY_MAIN[m.code] || [];
+    for (const s of list){
+      subskills[subId(m.code,s)] = { mainCode: m.code, name: s, totalXp: 0 };
+    }
+  }
+
+  return {
+    version: 4,
+    profile: { username: "Player", note: "" },
+    skills,
+    subskills,
+    userSubskillsByMain: {},
+    missions: [],
+    habits: [],
+    priorities: [
+      {id: cryptoId(), title:"Weight", tag:"DIE"},
+      {id: cryptoId(), title:"Run Marathon", tag:"PHY"},
+      {id: cryptoId(), title:"Climb Kebnekaise", tag:"PHY"},
+      {id: cryptoId(), title:"Dating", tag:"SOC"},
+      {id: cryptoId(), title:"PUA", tag:"HOB"},
+    ],
+    wishlist: [
+      {id: cryptoId(), title:"Lions Mane", cost:"1000 kr", tag:"DIE"},
+      {id: cryptoId(), title:"Running Shoes", cost:"2000 kr", tag:"PHY"},
+      {id: cryptoId(), title:"Barbell", cost:"599 kr", tag:"PHY"},
+      {id: cryptoId(), title:"Tinder Membership", cost:"200 kr", tag:"SOC"},
+      {id: cryptoId(), title:"Dancing Courses", cost:"300 kr", tag:"HOB"},
+    ],
+    ui: { selectedMain:"SOC", selectedSub:"", activeTab:"PROFILE" },
+  };
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return defaultState();
+    const st = JSON.parse(raw);
+
+    st.skills ||= {};
+    for (const m of MAINSKILLS) st.skills[m.code] ||= { totalXp: 0 };
+
+    st.subskills ||= {};
+    st.userSubskillsByMain ||= {};
+
+    for (const m of MAINSKILLS){
+      const list = MAP_SUBSKILLS_BY_MAIN[m.code] || [];
+      for (const s of list){
+        const id = subId(m.code,s);
+        st.subskills[id] ||= { mainCode:m.code, name:s, totalXp: 0 };
+      }
+    }
+    for (const [main, arr] of Object.entries(st.userSubskillsByMain)){
+      if (!Array.isArray(arr)) continue;
+      for (const s of arr){
+        const id = subId(main, s);
+        st.subskills[id] ||= { mainCode: main, name: s, totalXp: 0 };
+      }
+    }
+
+    st.profile ||= { username:"Player", note:"" };
+    st.missions ||= [];
+    st.habits ||= [];
+    st.priorities ||= [];
+    st.wishlist ||= [];
+    st.ui ||= { selectedMain:"SOC", selectedSub:"", activeTab:"PROFILE" };
+
+    return st;
+  }catch{
+    return defaultState();
+  }
+}
+
+function saveState(){ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+
+let state = loadState();
+
+/* =========================
+   TABS
+========================= */
+const TABS = [
+  { id:"PROFILE", label:"PROFILE" },
+  { id:"MAINSKILLS", label:"MAINSKILLS" },
+  { id:"SKILLSMAP", label:"SKILLSMAP" },
+  { id:"MISSIONS", label:"MISSIONS" },
+  { id:"HABITS", label:"HABITS" },
+  { id:"PRIORITIES", label:"PRIORITIES" },
+  { id:"WISHLIST", label:"WISHLIST" },
+];
+
+const tabsEl = document.getElementById("tabs");
+const mainEl = document.getElementById("main");
+
+function setTab(id){
+  state.ui.activeTab = id;
+  saveState();
+  render();
+}
+
+function renderTabs(){
+  tabsEl.innerHTML = "";
+  for (const t of TABS){
+    const b = document.createElement("button");
+    b.className = "tab" + (state.ui.activeTab===t.id ? " active" : "");
+    b.textContent = t.label;
+    b.onclick = ()=> setTab(t.id);
+    tabsEl.appendChild(b);
+  }
+}
+
+/* =========================
+   XP APPLY
+========================= */
+function addXp(mainCode, subSkillId, delta){
+  delta = Number(delta)||0;
+  if (!delta) return;
+  state.skills[mainCode] ||= { totalXp: 0 };
+  state.skills[mainCode].totalXp = Math.max(0, (state.skills[mainCode].totalXp||0) + delta);
+  if (subSkillId && state.subskills[subSkillId]){
+    state.subskills[subSkillId].totalXp = Math.max(0, (state.subskills[subSkillId].totalXp||0) + delta);
+  }
+  saveState();
+  render();
+}
+
+/* =========================
+   MODAL
+========================= */
+const modalBackdrop = document.getElementById("modalBackdrop");
+const modalTitleEl = document.getElementById("modalTitle");
+const modalBody = document.getElementById("modalBody");
+document.getElementById("modalClose").onclick = closeModal;
+modalBackdrop.addEventListener("click", (e)=>{ if (e.target===modalBackdrop) closeModal(); });
+
+function openModal(title, bodyNode){
+  modalTitleEl.textContent = title;
+  modalBody.innerHTML = "";
+  modalBody.appendChild(bodyNode);
+  modalBackdrop.classList.add("show");
+}
+function closeModal(){ modalBackdrop.classList.remove("show"); }
+
+/* =========================
+   UI HELPERS
+========================= */
+function el(html){
+  const d = document.createElement("div");
+  d.innerHTML = html.trim();
+  return d.firstElementChild;
+}
+function formatDateShort(iso){
+  if (!iso) return "";
+  const dt = new Date(iso);
+  if (Number.isNaN(dt.getTime())) return "";
+  return dt.toLocaleDateString(undefined, {year:"2-digit", month:"2-digit", day:"2-digit"});
+}
+function daysUntil(iso){
+  if (!iso) return null;
+  const dt = new Date(iso);
+  if (Number.isNaN(dt.getTime())) return null;
+  const now = new Date();
+  const ms = dt.setHours(0,0,0,0) - new Date(now.setHours(0,0,0,0)).getTime();
+  return Math.round(ms / 86400000);
+}
+function mainskillName(code){
+  return MAINSKILLS.find(m=>m.code===code)?.name || code;
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, (c)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  })[c]);
+}
+
+function allSubskillNamesForMain(mainCode){
+  const base = MAP_SUBSKILLS_BY_MAIN[mainCode] || [];
+  const user = state.userSubskillsByMain[mainCode] || [];
+  const set = new Set([...base, ...user]);
+  return [...set];
+}
+
+function ensureSubskill(mainCode, name){
+  const trimmed = (name||"").trim();
+  if (!trimmed) return null;
+  const id = subId(mainCode, trimmed);
+  state.subskills[id] ||= { mainCode, name: trimmed, totalXp: 0 };
+  state.userSubskillsByMain[mainCode] ||= [];
+  const arr = state.userSubskillsByMain[mainCode];
+  if (!arr.includes(trimmed) && !(MAP_SUBSKILLS_BY_MAIN[mainCode]||[]).includes(trimmed)){
+    arr.push(trimmed);
+  }
+  saveState();
+  return id;
+}
+
+/* =========================
+   CREATE FORMS
+========================= */
+function createFormHtml(){
+  return `
+    <div class="card" style="padding:10px;background:transparent;border:1px dashed var(--line)">
+      <div class="row wrap">
+        <button class="btn small primary" data-kind="mission" type="button">Mission</button>
+        <button class="btn small primary" data-kind="habit" type="button">Habit</button>
+      </div>
+      <div class="field" style="margin-top:10px">
+        <label class="muted">Target</label>
+        <div class="pill" data-targetpill>—</div>
+      </div>
+      <div class="field" style="margin-top:10px">
+        <label class="muted">Title</label>
+        <input data-title placeholder="e.g. Talk with mom" />
+      </div>
+      <div class="field" style="margin-top:10px">
+        <label class="muted">Description (optional)</label>
+        <textarea data-desc placeholder="extra details..."></textarea>
+      </div>
+      <div class="field" style="margin-top:10px" data-duewrap>
+        <label class="muted">Habit due date (optional)</label>
+        <input data-due type="date" />
+      </div>
+      <div class="row wrap" style="margin-top:10px">
+        <button class="btn ok" data-create type="button">Add</button>
+      </div>
+      <div class="hint" style="margin-top:10px">
+        Finishing a mission adds <span class="oktxt">+1 XP</span> to the selected <span class="accent">subskill</span> (if selected) and its <span class="accent">mainskill</span>.
+      </div>
+    </div>
+  `;
+}
+
+function bindCreateForm(container){
+  const kindBtns = container.querySelectorAll("[data-kind]");
+  const targetPill = container.querySelector("[data-targetpill]");
+  const titleEl = container.querySelector("[data-title]");
+  const descEl = container.querySelector("[data-desc]");
+  const dueWrap = container.querySelector("[data-duewrap]");
+  const dueEl = container.querySelector("[data-due]");
+  const createBtn = container.querySelector("[data-create]");
+  if (!targetPill || !createBtn) return;
+
+  let kind = "mission";
+
+  function refreshTarget(){
+    const main = state.ui.selectedMain || "SOC";
+    const sub = state.ui.selectedSub;
+    const mainLabel = `${main} — ${mainskillName(main)}`;
+    const subLabel = sub && state.subskills[sub] ? ` / ${state.subskills[sub].name}` : "";
+    targetPill.textContent = mainLabel + subLabel;
+  }
+  refreshTarget();
+
+  function setKind(k){
+    kind = k;
+    for (const b of kindBtns){
+      b.classList.toggle("primary", b.dataset.kind===k);
+      b.classList.toggle("ghost", b.dataset.kind!==k);
+    }
+    if (dueWrap) dueWrap.style.display = (k==="habit") ? "" : "none";
+  }
+  for (const b of kindBtns) b.onclick = ()=> setKind(b.dataset.kind);
+  setKind(kind);
+
+  createBtn.onclick = ()=>{
+    const mainCode = state.ui.selectedMain || "SOC";
+    const sub = state.ui.selectedSub || "";
+    const title = (titleEl?.value || "").trim();
+    const desc = (descEl?.value || "").trim();
+    if (!title) return alert("Title required.");
+
+    if (kind==="mission"){
+      state.missions.unshift({
+        id: cryptoId(),
+        title, desc,
+        mainCode,
+        subId: sub,
+        points: 0,
+        createdAt: new Date().toISOString(),
+      });
+    } else {
+      const dueISO = dueEl?.value ? new Date(dueEl.value + "T00:00:00").toISOString() : "";
+      state.habits.unshift({
+        id: cryptoId(),
+        title, desc,
+        mainCode,
+        subId: sub,
+        dueISO,
+        createdAt: new Date().toISOString(),
+      });
+    }
+
+    if (titleEl) titleEl.value = "";
+    if (descEl) descEl.value = "";
+    if (dueEl) dueEl.value = "";
+    saveState();
+    render();
+  };
+}
+
+/* =========================
+   SUBSKILL PLUS MENU
+========================= */
+function openPlusMenuForSubskill(mainCode, subSkillId){
+  const subName = state.subskills[subSkillId]?.name || "";
+  const body = el(`
+    <div class="grid" style="gap:10px">
+      <div class="pill">Target: <b>${mainCode}</b> ${subName ? " / " + escapeHtml(subName) : ""}</div>
+      <div class="grid cols3">
+        <button class="btn ok" id="addSub">+ Subskill</button>
+        <button class="btn ok" id="addMission">+ Mission</button>
+        <button class="btn ok" id="addHabit">+ Habit</button>
+      </div>
+      <div class="hint">
+        Subskills start at Level 1 (XP 0). Missions/Habits will target this subskill automatically.
+      </div>
+    </div>
+  `);
+
+  body.querySelector("#addSub").onclick = ()=>{
+    closeModal();
+    openAddSubskillModal(mainCode);
+  };
+  body.querySelector("#addMission").onclick = ()=>{
+    state.ui.selectedMain = mainCode;
+    state.ui.selectedSub = subSkillId;
+    state.ui.activeTab = "MISSIONS";
+    saveState();
+    closeModal();
+    render();
+  };
+  body.querySelector("#addHabit").onclick = ()=>{
+    state.ui.selectedMain = mainCode;
+    state.ui.selectedSub = subSkillId;
+    state.ui.activeTab = "HABITS";
+    saveState();
+    closeModal();
+    render();
+  };
+
+  openModal("Add New", body);
+}
+
+function openAddSubskillModal(mainCode){
+  const body = el(`
+    <div class="grid" style="gap:10px">
+      <div class="pill">Add subskill under <b>${mainCode} — ${mainskillName(mainCode)}</b></div>
+      <div class="field">
+        <label class="muted">Subskill name</label>
+        <input id="name" placeholder="e.g. Public Speaking" />
+      </div>
+      <div class="row wrap">
+        <button class="btn ok" id="create">Create</button>
+        <button class="btn" id="cancel">Cancel</button>
+      </div>
+      <div class="hint">After creating, it appears in MAINSKILLS + SKILLSMAP.</div>
+    </div>
+  `);
+
+  body.querySelector("#cancel").onclick = closeModal;
+  body.querySelector("#create").onclick = ()=>{
+    const name = body.querySelector("#name").value.trim();
+    if (!name) return alert("Name required.");
+    const id = ensureSubskill(mainCode, name);
+    state.ui.selectedMain = mainCode;
+    state.ui.selectedSub = id;
+    saveState();
+    closeModal();
+    render();
+  };
+
+  openModal("New Subskill", body);
+}
+
+/* =========================
+   GRAPH HELPERS + RENDERER (boxes + SVG lines)
+========================= */
+function getNodeRect(stageEl, nodeEl){
+  const s = stageEl.getBoundingClientRect();
+  const n = nodeEl.getBoundingClientRect();
+  return {
+    x: (n.left - s.left) + stageEl.scrollLeft,
+    y: (n.top - s.top) + stageEl.scrollTop,
+    w: n.width,
+    h: n.height
+  };
+}
+
+function autoLayoutNames(names){
+  const cols = 4;
+  const x0 = 40, y0 = 40, dx = 220, dy = 130;
+  const pos = {};
+  names.forEach((name, i)=>{
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    pos[name] = { x: x0 + col*dx, y: y0 + row*dy };
+  });
+  return pos;
+}
+
+function renderSkillGraph(mainCode, mountEl, {showRoot=true} = {}){
+  const names = allSubskillNamesForMain(mainCode);
+
+  const fixed = GRAPH_POS_BY_MAIN[mainCode] || null;
+  const auto = fixed ? null : autoLayoutNames(names);
+
+  const wrap = el(`<div class="graphWrap"><div class="graphStage"></div></div>`);
+  const stage = wrap.querySelector(".graphStage");
+
+  if (!fixed){
+    const rows = Math.ceil(Math.max(1,names.length) / 4);
+    stage.style.width = "980px";
+    stage.style.height = Math.max(520, 80 + rows*130) + "px";
+  } else {
+    stage.style.width = "980px";
+    stage.style.height = "520px";
+  }
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.setAttribute("class","graphLines");
+  svg.setAttribute("width","100%");
+  svg.setAttribute("height","100%");
+  stage.appendChild(svg);
+
+  const nodeEls = new Map();
+
+  // Root node (SOC-style)
+  if (showRoot && fixed && fixed["__ROOT__"]){
+    const r = fixed["__ROOT__"];
+    const mainXp = state.skills[mainCode]?.totalXp || 0;
+    const mp = xpProgress(mainXp);
+
+    const rootNode = el(`
+      <div class="node" style="left:${r.x}px;top:${r.y}px;width:${r.w||260}px">
+        <div class="nodeBtns">
+          <button class="nodeBtn primary" title="Select main">✓</button>
+          <button class="nodeBtn ok" title="Add subskill">＋</button>
+        </div>
+        <div class="nodeTitle">${escapeHtml(r.label||`${mainCode} (Main)`)}</div>
+        <div class="nodeMeta">
+          <span class="chip">${mainCode} — ${mainskillName(mainCode)}</span>
+          <span class="chip">Lv ${mp.lvl}</span>
+          <span class="chip">XP ${mainXp}</span>
+        </div>
+      </div>
+    `);
+
+    const [selBtn, plusBtn] = rootNode.querySelectorAll("button");
+    selBtn.onclick = (e)=>{
+      e.stopPropagation();
+      state.ui.selectedMain = mainCode;
+      state.ui.selectedSub = "";
+      saveState(); render();
+    };
+    plusBtn.onclick = (e)=>{
+      e.stopPropagation();
+      openAddSubskillModal(mainCode);
+    };
+
+    rootNode.onclick = ()=>{
+      state.ui.selectedMain = mainCode;
+      state.ui.selectedSub = "";
+      saveState(); render();
+    };
+
+    stage.appendChild(rootNode);
+    nodeEls.set("__ROOT__", rootNode);
+  }
+
+  // Subskill nodes
+  for (const name of names){
+    const id = subId(mainCode, name);
+    const xp = state.subskills[id]?.totalXp || 0;
+    const p = xpProgress(xp);
+
+    const pos = (fixed && fixed[name]) ? fixed[name] : (auto && auto[name]) || {x:40,y:40};
+    const node = el(`
+      <div class="node" style="left:${pos.x}px;top:${pos.y}px">
+        <div class="nodeBtns">
+          <button class="nodeBtn primary" title="Select">✓</button>
+          <button class="nodeBtn ok" title="Add New">＋</button>
+        </div>
+        <div class="nodeTitle">${escapeHtml(name)}</div>
+        <div class="nodeMeta">
+          <span class="chip">Lv ${p.lvl}</span>
+          <span class="chip">XP ${xp}</span>
+        </div>
+      </div>
+    `);
+
+    const [selectBtn, plusBtn] = node.querySelectorAll("button");
+    selectBtn.onclick = (e)=>{
+      e.stopPropagation();
+      state.ui.selectedMain = mainCode;
+      state.ui.selectedSub = (state.ui.selectedSub===id) ? "" : id;
+      saveState(); render();
+    };
+    plusBtn.onclick = (e)=>{
+      e.stopPropagation();
+      state.ui.selectedMain = mainCode;
+      state.ui.selectedSub = id;
+      saveState();
+      openPlusMenuForSubskill(mainCode, id);
+    };
+
+    node.onclick = ()=>{
+      state.ui.selectedMain = mainCode;
+      state.ui.selectedSub = id;
+      saveState(); render();
+    };
+
+    stage.appendChild(node);
+    nodeEls.set(name, node);
+  }
+
+  // Lines
+  function drawLines(){
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    const edges = GRAPH_EDGES_BY_MAIN[mainCode] || [];
+    for (const [fromName, toName] of edges){
+      const fromKey = (fromName==="Social" && nodeEls.has("__ROOT__")) ? "__ROOT__" : fromName;
+      const toKey = toName;
+
+      const fromEl = nodeEls.get(fromKey);
+      const toEl = nodeEls.get(toKey);
+      if (!fromEl || !toEl) continue;
+
+      const a = getNodeRect(stage, fromEl);
+      const b = getNodeRect(stage, toEl);
+
+      const x1 = a.x + a.w/2;
+      const y1 = a.y + a.h;
+      const x2 = b.x + b.w/2;
+      const y2 = b.y;
+
+      const path = document.createElementNS("http://www.w3.org/2000/svg","path");
+      const midY = (y1 + y2)/2;
+      const d = `M ${x1} ${y1} C ${x1} ${midY} ${x2} ${midY} ${x2} ${y2}`;
+      path.setAttribute("d", d);
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", "rgba(102,163,255,.65)");
+      path.setAttribute("stroke-width", "3");
+      path.setAttribute("stroke-linecap", "round");
+      svg.appendChild(path);
+    }
+  }
+
+  drawLines();
+
+  wrap.addEventListener("scroll", ()=>drawLines(), {passive:true});
+  window.addEventListener("resize", ()=>drawLines(), {passive:true});
+
+  mountEl.innerHTML = "";
+  mountEl.appendChild(wrap);
+}
+
+/* =========================
+   SCREENS
+========================= */
+function screenProfile(){
+  const c = el(`<div class="grid cols2"></div>`);
+
+  const card1 = el(`
+    <div class="card">
+      <div class="kicker">Profile</div>
+      <h2 style="margin-top:6px">Player</h2>
+      <div class="hr"></div>
+      <div class="field">
+        <label class="muted">Username</label>
+        <input id="username" />
+      </div>
+      <div class="field" style="margin-top:10px">
+        <label class="muted">Notes</label>
+        <textarea id="note"></textarea>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn primary" id="saveProfile">Save</button>
+      </div>
+      <div class="hint" style="margin-top:10px">All data is stored locally on your phone (localStorage) unless you export it.</div>
+    </div>
+  `);
+
+  const card2 = el(`
+    <div class="card">
+      <div class="kicker">Overview</div>
+      <h2 style="margin-top:6px">Total progress</h2>
+      <div class="hr"></div>
+      <div class="list" id="overviewList"></div>
+    </div>
+  `);
+
+  c.appendChild(card1);
+  c.appendChild(card2);
+
+  card1.querySelector("#username").value = state.profile.username || "Player";
+  card1.querySelector("#note").value = state.profile.note || "";
+  card1.querySelector("#saveProfile").onclick = ()=>{
+    state.profile.username = card1.querySelector("#username").value.trim() || "Player";
+    state.profile.note = card1.querySelector("#note").value || "";
+    saveState();
+    render();
+  };
+
+  const list = card2.querySelector("#overviewList");
+  list.innerHTML = "";
+  for (const m of MAINSKILLS){
+    const xp = state.skills[m.code]?.totalXp || 0;
+    const p = xpProgress(xp);
+    list.appendChild(el(`
+      <div class="item">
+        <div class="row sp">
+          <div>
+            <div class="title">${m.code} — ${m.name}</div>
+            <div class="muted">Level ${p.lvl} • Total XP ${xp}</div>
+          </div>
+          <span class="chip">Next: ${p.nextNeed ?? "MAX"}</span>
+        </div>
+        <div class="xpbar" style="margin-top:10px"><div style="width:${Math.round(p.pct*100)}%"></div></div>
+      </div>
+    `));
+  }
+  return c;
+}
+
+function screenMainSkills(){
+  const root = el(`<div class="grid"></div>`);
+
+  const top = el(`
+    <div class="card">
+      <div class="row sp wrap">
+        <div>
+          <div class="kicker">Main skills</div>
+          <h2 style="margin-top:6px">Boxes + connected lines</h2>
+          <div class="muted">Tap a skill to select it. Tap ✓ on a box to select target. Tap ＋ to add.</div>
+        </div>
+        <div class="row wrap" id="skillPills"></div>
+      </div>
+    </div>
+  `);
+  root.appendChild(top);
+
+  const pills = top.querySelector("#skillPills");
+  pills.innerHTML = "";
+  for (const m of MAINSKILLS){
+    const xp = state.skills[m.code]?.totalXp || 0;
+    const p = xpProgress(xp);
+    const b = el(`<button class="btn small ${state.ui.selectedMain===m.code?"primary":""}">${m.code} Lv ${p.lvl}</button>`);
+    b.onclick = ()=>{
+      state.ui.selectedMain = m.code;
+      state.ui.selectedSub = "";
+      saveState(); render();
+    };
+    pills.appendChild(b);
+  }
+
+  const selected = MAINSKILLS.find(x=>x.code===state.ui.selectedMain) || MAINSKILLS[0];
+  const xp = state.skills[selected.code]?.totalXp || 0;
+  const p = xpProgress(xp);
+
+  const detail = el(`
+    <div class="card">
+      <div class="row sp wrap">
+        <div>
+          <div class="kicker">${selected.code}</div>
+          <h2 style="margin-top:6px">${selected.name}</h2>
+          <div class="muted">Level ${p.lvl} • Total XP ${xp}</div>
+        </div>
+        <div class="row wrap">
+          <button class="btn ok" id="newSub">+ Subskill</button>
+          <button class="btn ok" id="quickMission">+ Mission</button>
+          <button class="btn ok" id="quickHabit">+ Habit</button>
+        </div>
+      </div>
+      <div class="xpbar" style="margin-top:10px"><div style="width:${Math.round(p.pct*100)}%"></div></div>
+      <div class="hr"></div>
+
+      <div class="twoCol">
+        <div>
+          <h3>Subskills graph</h3>
+          <div id="graphMount"></div>
+          <div class="hint" style="margin-top:8px">
+            Note: only SOC has hand-drawn connections right now. Others show boxes; add edges later to draw lines.
+          </div>
+        </div>
+        <div>
+          <h3>Create (targets selected subskill if chosen)</h3>
+          ${createFormHtml()}
+        </div>
+      </div>
+    </div>
+  `);
+  root.appendChild(detail);
+
+  detail.querySelector("#newSub").onclick = ()=> openAddSubskillModal(selected.code);
+  detail.querySelector("#quickMission").onclick = ()=>{ state.ui.activeTab="MISSIONS"; saveState(); render(); };
+  detail.querySelector("#quickHabit").onclick = ()=>{ state.ui.activeTab="HABITS"; saveState(); render(); };
+
+  renderSkillGraph(selected.code, detail.querySelector("#graphMount"), {showRoot: selected.code==="SOC"});
+
+  bindCreateForm(detail);
+  return root;
+}
+
+function screenSkillsMap(){
+  const root = el(`
+    <div class="grid">
+      <div class="card">
+        <div class="kicker">Skills map</div>
+        <h2 style="margin-top:6px">All mainskills + subskills (boxed + lines)</h2>
+        <div class="muted">Expand mainskills. Use ✓ to target. Use ＋ to add Subskill/Mission/Habit.</div>
+      </div>
+      <div class="grid" id="mapList"></div>
+    </div>
+  `);
+
+  const list = root.querySelector("#mapList");
+  list.innerHTML = "";
+
+  for (const m of MAINSKILLS){
+    const mxp = state.skills[m.code]?.totalXp || 0;
+    const mp = xpProgress(mxp);
+
+    const d = el(`
+      <details>
+        <summary>
+          <div class="sumLeft">
+            <div class="title">${m.code} — ${m.name}</div>
+            <div class="muted">Level ${mp.lvl} • Total XP ${mxp}</div>
+          </div>
+          <div class="sumRight">
+            <span class="chip">${allSubskillNamesForMain(m.code).length} subskills</span>
+            <button class="btn small ${state.ui.selectedMain===m.code?"primary":""}" type="button">Select</button>
+          </div>
+        </summary>
+        <div class="hr"></div>
+        <div class="twoCol">
+          <div>
+            <div class="row sp wrap">
+              <h3 style="margin:0">Subskills graph</h3>
+              <button class="btn small ok" type="button" data-addsub>+ Subskill</button>
+            </div>
+            <div id="graphMount" style="margin-top:10px"></div>
+            <div class="hint" style="margin-top:8px">Lines appear when edges are defined for that mainskill.</div>
+          </div>
+          <div>
+            <h3>Create (uses selected subskill)</h3>
+            ${createFormHtml()}
+          </div>
+        </div>
+      </details>
+    `);
+
+    const selectBtn = d.querySelector("summary button");
+    selectBtn.onclick = (e)=>{
+      e.preventDefault(); e.stopPropagation();
+      state.ui.selectedMain = m.code;
+      state.ui.selectedSub = "";
+      saveState(); render();
+    };
+
+    d.querySelector("[data-addsub]").onclick = ()=> openAddSubskillModal(m.code);
+
+    renderSkillGraph(m.code, d.querySelector("#graphMount"), {showRoot: m.code==="SOC"});
+
+    bindCreateForm(d);
+    list.appendChild(d);
+  }
+
+  return root;
+}
+
+function screenMissions(){
+  const root = el(`
+    <div class="grid">
+      <div class="card">
+        <div class="row sp wrap">
+          <div>
+            <div class="kicker">Missions</div>
+            <h2 style="margin-top:6px">Finish gives +1 XP (UNDO available)</h2>
+            <div class="muted">Target: ${state.ui.selectedMain} ${state.ui.selectedSub ? "/ " + (state.subskills[state.ui.selectedSub]?.name||"") : ""}</div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        ${createFormHtml()}
+      </div>
+      <div class="card">
+        <h3>Your missions</h3>
+        <div class="list" id="list"></div>
+      </div>
+    </div>
+  `);
+
+  bindCreateForm(root);
+
+  const list = root.querySelector("#list");
+  list.innerHTML = "";
+
+  if (!state.missions.length){
+    list.appendChild(el(`<div class="muted">No missions yet. Add one above.</div>`));
+  }
+
+  for (const m of state.missions){
+    const subName = m.subId && state.subskills[m.subId] ? state.subskills[m.subId].name : "";
+    const it = el(`
+      <div class="item">
+        <div class="row sp wrap">
+          <div>
+            <div class="title">${escapeHtml(m.title)}</div>
+            <div class="meta">
+              <span class="chip">${m.mainCode} ${subName ? " / " + escapeHtml(subName) : ""}</span>
+              <span class="chip">Points: ${m.points}</span>
+              <span class="chip">Created: ${formatDateShort(m.createdAt)}</span>
+            </div>
+            ${m.desc ? `<div class="muted" style="margin-top:6px">${escapeHtml(m.desc)}</div>` : ""}
+          </div>
+          <div class="row wrap">
+            <button class="btn small ok">Finish (+1)</button>
+            <button class="btn small">Undo (-1)</button>
+            <button class="btn small bad">Delete</button>
+          </div>
+        </div>
+      </div>
+    `);
+
+    const [finishBtn, undoBtn, delBtn] = it.querySelectorAll("button");
+
+    finishBtn.onclick = ()=>{
+      m.points = (m.points||0) + 1;
+      addXp(m.mainCode, m.subId, +1);
+      saveState(); render();
+    };
+    undoBtn.onclick = ()=>{
+      if ((m.points||0) <= 0) return;
+      m.points = (m.points||0) - 1;
+      addXp(m.mainCode, m.subId, -1);
+      saveState(); render();
+    };
+    delBtn.onclick = ()=>{
+      const ok = confirm(`Delete mission "${m.title}"?`);
+      if (!ok) return;
+      state.missions = state.missions.filter(x=>x.id!==m.id);
+      saveState(); render();
+    };
+
+    list.appendChild(it);
+  }
+
+  return root;
+}
+
+function screenHabits(){
+  const root = el(`
+    <div class="grid">
+      <div class="card">
+        <div class="row sp wrap">
+          <div>
+            <div class="kicker">Habits</div>
+            <h2 style="margin-top:6px">Track recurring stuff</h2>
+            <div class="muted">Target: ${state.ui.selectedMain} ${state.ui.selectedSub ? "/ " + (state.subskills[state.ui.selectedSub]?.name||"") : ""}</div>
+          </div>
+        </div>
+        <div class="hr"></div>
+        ${createFormHtml()}
+      </div>
+      <div class="card">
+        <h3>Your habits</h3>
+        <div class="list" id="list"></div>
+      </div>
+    </div>
+  `);
+
+  bindCreateForm(root);
+
+  const list = root.querySelector("#list");
+  list.innerHTML = "";
+
+  if (!state.habits.length){
+    list.appendChild(el(`<div class="muted">No habits yet. Add one above.</div>`));
+  }
+
+  const items = [...state.habits].sort((a,b)=>{
+    const da = a.dueISO ? new Date(a.dueISO).getTime() : Infinity;
+    const db = b.dueISO ? new Date(b.dueISO).getTime() : Infinity;
+    if (da!==db) return da-db;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
+  for (const h of items){
+    const subName = h.subId && state.subskills[h.subId] ? state.subskills[h.subId].name : "";
+    const dLeft = daysUntil(h.dueISO);
+    const dueTxt = h.dueISO ? `${formatDateShort(h.dueISO)} (${dLeft} days)` : "—";
+    const it = el(`
+      <div class="item">
+        <div class="row sp wrap">
+          <div>
+            <div class="title">${escapeHtml(h.title)}</div>
+            <div class="meta">
+              <span class="chip">${h.mainCode} ${subName ? " / " + escapeHtml(subName) : ""}</span>
+              <span class="chip">Due: ${dueTxt}</span>
+              <span class="chip">Created: ${formatDateShort(h.createdAt)}</span>
+            </div>
+            ${h.desc ? `<div class="muted" style="margin-top:6px">${escapeHtml(h.desc)}</div>` : ""}
+          </div>
+          <div class="row wrap">
+            <button class="btn small">Edit</button>
+            <button class="btn small bad">Delete</button>
+          </div>
+        </div>
+      </div>
+    `);
+
+    const [editBtn, delBtn] = it.querySelectorAll("button");
+
+    editBtn.onclick = ()=>{
+      const newTitle = prompt("Edit habit title:", h.title);
+      if (newTitle===null) return;
+      h.title = newTitle.trim() || h.title;
+
+      const newDue = prompt("Edit due date (YYYY-MM-DD) or blank:", h.dueISO ? new Date(h.dueISO).toISOString().slice(0,10) : "");
+      if (newDue===null) { saveState(); render(); return; }
+      if (!newDue.trim()) h.dueISO = "";
+      else h.dueISO = new Date(newDue.trim()+"T00:00:00").toISOString();
+
+      saveState(); render();
+    };
+
+    delBtn.onclick = ()=>{
+      const ok = confirm(`Delete habit "${h.title}"?`);
+      if (!ok) return;
+      state.habits = state.habits.filter(x=>x.id!==h.id);
+      saveState(); render();
+    };
+
+    list.appendChild(it);
+  }
+
+  return root;
+}
+
+function reorder(arr, id, dir){
+  const i = arr.findIndex(x=>x.id===id);
+  if (i<0) return;
+  const j = i + dir;
+  if (j<0 || j>=arr.length) return;
+  const tmp = arr[i]; arr[i]=arr[j]; arr[j]=tmp;
+}
+
+function screenPriorities(){
+  const root = el(`
+    <div class="grid">
+      <div class="card">
+        <div class="row sp wrap">
+          <div>
+            <div class="kicker">Priorities</div>
+            <h2 style="margin-top:6px">Move items up/down</h2>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="twoCol">
+          <div class="field">
+            <label class="muted">Title</label>
+            <input id="title" placeholder="e.g. Weight" />
+          </div>
+          <div class="field">
+            <label class="muted">Tag (skill code)</label>
+            <select id="tag"></select>
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" id="create">Add</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>List</h3>
+        <div class="list" id="list"></div>
+      </div>
+    </div>
+  `);
+
+  const tagSel = root.querySelector("#tag");
+  for (const m of MAINSKILLS){
+    const o = document.createElement("option");
+    o.value = m.code;
+    o.textContent = `${m.code} — ${m.name}`;
+    tagSel.appendChild(o);
+  }
+
+  root.querySelector("#create").onclick = ()=>{
+    const title = root.querySelector("#title").value.trim();
+    const tag = tagSel.value;
+    if (!title) return alert("Title required.");
+    state.priorities.push({id:cryptoId(), title, tag});
+    root.querySelector("#title").value = "";
+    saveState(); render();
+  };
+
+  const list = root.querySelector("#list");
+  list.innerHTML = "";
+  if (!state.priorities.length) list.appendChild(el(`<div class="muted">No priorities yet.</div>`));
+
+  state.priorities.forEach(p=>{
+    const it = el(`
+      <div class="item">
+        <div class="row sp wrap">
+          <div>
+            <div class="title">${escapeHtml(p.title)}</div>
+            <div class="muted">${p.tag} — ${mainskillName(p.tag)}</div>
+          </div>
+          <div class="row wrap">
+            <button class="btn small">▲</button>
+            <button class="btn small">▼</button>
+            <button class="btn small bad">Delete</button>
+          </div>
+        </div>
+      </div>
+    `);
+    const [up,down,del] = it.querySelectorAll("button");
+    up.onclick = ()=>{ reorder(state.priorities, p.id, -1); saveState(); render(); };
+    down.onclick = ()=>{ reorder(state.priorities, p.id, +1); saveState(); render(); };
+    del.onclick = ()=>{
+      if (!confirm(`Delete "${p.title}"?`)) return;
+      state.priorities = state.priorities.filter(x=>x.id!==p.id);
+      saveState(); render();
+    };
+    list.appendChild(it);
+  });
+
+  return root;
+}
+
+function screenWishlist(){
+  const root = el(`
+    <div class="grid">
+      <div class="card">
+        <div class="row sp wrap">
+          <div>
+            <div class="kicker">Wishlist</div>
+            <h2 style="margin-top:6px">Move items up/down</h2>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="grid cols3">
+          <div class="field">
+            <label class="muted">Item</label>
+            <input id="title" placeholder="e.g. Barbell" />
+          </div>
+          <div class="field">
+            <label class="muted">Cost</label>
+            <input id="cost" placeholder="e.g. 599 kr" />
+          </div>
+          <div class="field">
+            <label class="muted">Tag (skill code)</label>
+            <select id="tag"></select>
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" id="create">Add</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>List</h3>
+        <div class="list" id="list"></div>
+      </div>
+    </div>
+  `);
+
+  const tagSel = root.querySelector("#tag");
+  for (const m of MAINSKILLS){
+    const o = document.createElement("option");
+    o.value = m.code;
+    o.textContent = `${m.code} — ${m.name}`;
+    tagSel.appendChild(o);
+  }
+
+  root.querySelector("#create").onclick = ()=>{
+    const title = root.querySelector("#title").value.trim();
+    const cost = root.querySelector("#cost").value.trim();
+    const tag = tagSel.value;
+    if (!title) return alert("Item required.");
+    state.wishlist.push({id:cryptoId(), title, cost, tag});
+    root.querySelector("#title").value = "";
+    root.querySelector("#cost").value = "";
+    saveState(); render();
+  };
+
+  const list = root.querySelector("#list");
+  list.innerHTML = "";
+  if (!state.wishlist.length) list.appendChild(el(`<div class="muted">No wishlist items yet.</div>`));
+
+  state.wishlist.forEach(w=>{
+    const it = el(`
+      <div class="item">
+        <div class="row sp wrap">
+          <div>
+            <div class="title">${escapeHtml(w.title)}</div>
+            <div class="meta">
+              <span class="chip">${escapeHtml(w.cost || "—")}</span>
+              <span class="chip">${w.tag} — ${mainskillName(w.tag)}</span>
+            </div>
+          </div>
+          <div class="row wrap">
+            <button class="btn small">▲</button>
+            <button class="btn small">▼</button>
+            <button class="btn small bad">Delete</button>
+          </div>
+        </div>
+      </div>
+    `);
+    const [up,down,del] = it.querySelectorAll("button");
+    up.onclick = ()=>{ reorder(state.wishlist, w.id, -1); saveState(); render(); };
+    down.onclick = ()=>{ reorder(state.wishlist, w.id, +1); saveState(); render(); };
+    del.onclick = ()=>{
+      if (!confirm(`Delete "${w.title}"?`)) return;
+      state.wishlist = state.wishlist.filter(x=>x.id!==w.id);
+      saveState(); render();
+    };
+    list.appendChild(it);
+  });
+
+  return root;
+}
+
+/* =========================
+   RENDER ROUTER
+========================= */
+function render(){
+  renderTabs();
+  mainEl.innerHTML = "";
+  const tab = state.ui.activeTab;
+  if (tab==="PROFILE") mainEl.appendChild(screenProfile());
+  else if (tab==="MAINSKILLS") mainEl.appendChild(screenMainSkills());
+  else if (tab==="SKILLSMAP") mainEl.appendChild(screenSkillsMap());
+  else if (tab==="MISSIONS") mainEl.appendChild(screenMissions());
+  else if (tab==="HABITS") mainEl.appendChild(screenHabits());
+  else if (tab==="PRIORITIES") mainEl.appendChild(screenPriorities());
+  else if (tab==="WISHLIST") mainEl.appendChild(screenWishlist());
+  else mainEl.appendChild(screenProfile());
+}
+
+/* =========================
+   EXPORT / IMPORT / RESET
+========================= */
+document.getElementById("exportBtn").onclick = ()=>{
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "gogetta_gg_export.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+document.getElementById("importBtn").onclick = ()=>{
+  const inp = document.createElement("input");
+  inp.type = "file";
+  inp.accept = "application/json";
+  inp.onchange = ()=>{
+    const file = inp.files?.[0];
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = ()=>{
+      try{
+        const obj = JSON.parse(String(r.result||""));
+        localStorage.setItem(STORE_KEY, JSON.stringify(obj));
+        state = loadState();
+        saveState();
+        render();
+      }catch{
+        alert("Import failed: invalid JSON.");
+      }
+    };
+    r.readAsText(file);
+  };
+  inp.click();
+};
+
+document.getElementById("resetBtn").onclick = ()=>{
+  if (!confirm("Reset EVERYTHING? This deletes local data on this device.")) return;
+  state = defaultState();
+  saveState();
+  render();
+};
+
+render();
+</script>
+</body>
+</html>
